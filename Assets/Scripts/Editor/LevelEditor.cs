@@ -71,7 +71,6 @@ public class LevelEditorWindow : EditorWindow
     }
 
     // Methods - panels
-
     private void DrawLeftPanel()
     {
         EditorGUILayout.BeginVertical(GUILayout.Width(LeftPanelWidth));
