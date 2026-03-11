@@ -1,0 +1,76 @@
+{
+    "name": "BusMayhemInputActions",
+    "maps": [
+        {
+            "name": "Gameplay",
+            "id": "f3b55bdf-f238-459f-a09a-7b24b7608bff",
+            "actions": [
+                {
+                    "name": "Tap",
+                    "type": "Button",
+                    "id": "91753aff-32a7-4489-9a52-ab7b5e027817",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "TapPosition",
+                    "type": "Value",
+                    "id": "6ba46038-2e66-4e95-b4d8-e342323e9caf",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d6b8d939-6caa-47b9-bca8-683e94c59c7e",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "129da70a-db25-480b-adbf-0f55e41d1765",
+                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8367a93d-55d3-4059-bae9-4a1a195ae1c0",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TapPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0c322f95-1073-4d13-9980-2c9a26ab5116",
+                    "path": "<Touchscreen>/primaryTouch/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TapPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

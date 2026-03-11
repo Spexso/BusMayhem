@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -16,8 +17,20 @@ public class GridManager : MonoBehaviour
 
     // Properties
     public int StickmanCount => stickmans.Count;
+    public static GridManager Instance { get; private set; }
 
     // Methods
+    public void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
+
     public void InitializeGrid(LevelData Data)
     {
         gridWidth = Data.GridWidth;
@@ -39,15 +52,16 @@ public class GridManager : MonoBehaviour
         return true;
     }
 
-    private Vector3[] BuildWorldPath(List<Vector2Int> gridPath, int startX)
+    private Vector3[] BuildWorldPath(List<Vector2Int> gridPath, StickmanController stickman)
     {
         List<Vector3> worldPath = new List<Vector3>();
 
         foreach (Vector2Int gridPos in gridPath)
             worldPath.Add(cells[gridPos.x, gridPos.y].transform.position + Vector3.up * 0.5f);
 
-        Vector2Int lastGridPos = gridPath[gridPath.Count - 1];
-        Vector3 exitPos = cells[lastGridPos.x, 0].transform.position + Vector3.forward * cellSize + Vector3.up * 0.5f;
+        int exitX = gridPath.Count > 0 ? gridPath[gridPath.Count - 1].x : stickman.GridX;
+        Vector3 exitCellPos = cells[exitX, 0].transform.position;
+        Vector3 exitPos = exitCellPos + Vector3.forward * cellSize + Vector3.up * 0.5f;
         worldPath.Add(exitPos);
 
         return worldPath.ToArray();
@@ -72,7 +86,7 @@ public class GridManager : MonoBehaviour
         cells[stickman.GridX, stickman.GridY].ClearOccupant();
         stickmans.Remove(stickman);
 
-        Vector3[] worldPath = BuildWorldPath(gridPath, stickman.GridX);
+        Vector3[] worldPath = BuildWorldPath(gridPath, stickman);
         stickman.MoveToExit(worldPath, () => OnStickmanReachedExit(stickman));
 
         RefreshHighlights();
@@ -102,8 +116,10 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < gridHeight; y++)
             {
-                Vector3 position = new Vector3(x * cellSize, 0f, (gridHeight - 1 - y) * cellSize);
-                GameObject CellObj = Instantiate(cellPrefab, position, cellPrefab.transform.rotation, this.transform);
+                float offsetX = (gridWidth - 1) * cellSize * 0.5f;
+                Vector3 localPosition = new Vector3(x * cellSize - offsetX, 0f, -(y * cellSize));
+                GameObject CellObj = Instantiate(cellPrefab, Vector3.zero, cellPrefab.transform.rotation, this.transform);
+                CellObj.transform.localPosition = localPosition;
 
                 CellObj.name = $"Cell_{x}_{y}";
                 GridCell cell = CellObj.GetComponent<GridCell>();
@@ -142,7 +158,9 @@ public class GridManager : MonoBehaviour
 
     private void OnStickmanReachedExit(StickmanController stickman)
     {
-        // BusManager will hook to this later
-        Destroy(stickman.gameObject);
+        BusManager.Instance.HandleStickmanArrival(stickman);
+
+        // HandlesStickmanArrival->BoardStickman already disables gameObject, so no need to destroy it here
+        //Destroy(stickman.gameObject); 
     }
 }

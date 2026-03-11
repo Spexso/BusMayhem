@@ -8,21 +8,22 @@ public class StickmanController : MonoBehaviour
     // Fields
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float arrivalThreshold = 0.01f;
-    [SerializeField] private float dimmedAlpha = 0.4f;
 
+    private float activeEmissionColorStrength = 0.6f;
+    private float passiveEmissionColorStrength = 0.4f;
     private int gridX;
     private int gridY;
     private StickmanColor stickmanColor;
     private bool isMoving;
     private Renderer meshRenderer;
 
-    // Properties
-    public int GridX => gridX;
-    public int GridY => gridY;
-    public StickmanColor Color => stickmanColor;
-    public bool IsMoving => isMoving;
 
     // Methods
+    public int GridX => gridX;
+    public int GridY => gridY;
+    public StickmanColor CColor => stickmanColor;
+    public bool IsMoving => isMoving;
+
     public void Initialize(int x, int y, StickmanColor color)
     {
         gridX = x;
@@ -45,8 +46,10 @@ public class StickmanController : MonoBehaviour
         if (meshRenderer == null)
             return;
 
-        Color color = meshRenderer.material.color;
-        meshRenderer.material.color = new Color(color.r, color.g, color.b, 1f);
+        meshRenderer.material.EnableKeyword("_EMISSION");
+        Color baseColor = ColorConverter.GetColor(stickmanColor);
+        meshRenderer.material.SetColor("_EmissionColor", baseColor * activeEmissionColorStrength);
+        meshRenderer.material.color = baseColor;
     }
 
     public void SetDimmed()
@@ -54,8 +57,10 @@ public class StickmanController : MonoBehaviour
         if (meshRenderer == null)
             return;
 
-        Color color = meshRenderer.material.color;
-        meshRenderer.material.color = new Color(color.r, color.g, color.b, dimmedAlpha);
+        meshRenderer.material.DisableKeyword("_EMISSION");
+        Color baseColor = ColorConverter.GetColor(stickmanColor);
+        meshRenderer.material.color = baseColor * passiveEmissionColorStrength;
+        meshRenderer.material.SetColor("_EmissionColor", Color.black);
     }
 
     public void MoveToExit(Vector3[] path, System.Action onComplete)

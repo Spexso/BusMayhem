@@ -4,23 +4,23 @@ using UnityEngine;
 public class LevelData : ScriptableObject
 {
     // Fields
-    [Header("Grid Settings")]
+    [Header("General Settings")]
     [SerializeField] private int gridWidth = 5;
     [SerializeField] private int gridHeight = 7;
+    [SerializeField] private float timerDuration = 60f;
+    [SerializeField] private int waitingAreaSize = 3;
 
-    [Header("Stickmen")]
+    [Header("Passengers")]
     [SerializeField] private ColoredCell[] cells;
 
-    [Header("Bus Sequence")]
-    [SerializeField] private StickmanColor[] busSequence;
+    [Header("Buses")]
+    [SerializeField] private BusData[] busSequence;
 
-    [Header("Timer")]
-    [SerializeField] private float timerDuration = 60f;
-
-    // Properties
+    // Methods
     public int GridWidth => gridWidth;
     public int GridHeight => gridHeight;
     public ColoredCell[] Cells => cells;
-    public StickmanColor[] BusSequence => busSequence;
+    public BusData[] BusSequence => busSequence;
     public float TimerDuration => timerDuration;
+    public int WaitingAreaSize => waitingAreaSize;
 }

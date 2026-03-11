@@ -12,44 +12,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ceeb16db27349e14ab8d6e3cd7108b91, type: 3}
   m_Name: Level01
   m_EditorClassIdentifier: 
-  gridWidth: 5
-  gridHeight: 7
+  gridWidth: 3
+  gridHeight: 5
+  timerDuration: 60
+  waitingAreaSize: 3
   cells:
   - gridX: 0
     gridY: 0
     color: 1
-  - gridX: 1
-    gridY: 0
-    color: 2
-  - gridX: 2
-    gridY: 0
-    color: 3
-  - gridX: 3
-    gridY: 0
-    color: 1
-  - gridX: 4
-    gridY: 0
-    color: 4
   - gridX: 0
     gridY: 1
-    color: 2
-  - gridX: 1
-    gridY: 1
-    color: 3
-  - gridX: 2
-    gridY: 1
-    color: 4
-  - gridX: 3
-    gridY: 1
-    color: 2
-  - gridX: 4
-    gridY: 1
+    color: 1
+  - gridX: 0
+    gridY: 2
+    color: 1
+  - gridX: 0
+    gridY: 3
     color: 1
   - gridX: 1
-    gridY: 2
-    color: 3
-  - gridX: 3
-    gridY: 2
+    gridY: 0
     color: 4
-  busSequence: 01000000020000000300000004000000
-  timerDuration: 60
+  - gridX: 1
+    gridY: 1
+    color: 2
+  - gridX: 1
+    gridY: 2
+    color: 2
+  - gridX: 1
+    gridY: 3
+    color: 4
+  - gridX: 2
+    gridY: 0
+    color: 4
+  - gridX: 2
+    gridY: 1
+    color: 2
+  - gridX: 2
+    gridY: 2
+    color: 2
+  - gridX: 2
+    gridY: 3
+    color: 4
+  busSequence:
+  - capacity: 4
+    color: 1
+  - capacity: 4
+    color: 4
+  - capacity: 4
+    color: 2
