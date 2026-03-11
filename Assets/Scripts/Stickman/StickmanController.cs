@@ -16,6 +16,7 @@ public class StickmanController : MonoBehaviour
     private StickmanColor stickmanColor;
     private bool isMoving;
     private Renderer meshRenderer;
+    private bool IsInteractable = true;
 
 
     // Methods
@@ -23,6 +24,7 @@ public class StickmanController : MonoBehaviour
     public int GridY => gridY;
     public StickmanColor CColor => stickmanColor;
     public bool IsMoving => isMoving;
+    public bool IsInteractionEnabled => IsInteractable;
 
     public void Initialize(int x, int y, StickmanColor color)
     {
@@ -39,6 +41,11 @@ public class StickmanController : MonoBehaviour
 
         meshRenderer.material = new Material(meshRenderer.material);
         meshRenderer.material.color = ColorConverter.GetColor(color);
+    }
+
+    public void DisableInteraction()
+    {
+        IsInteractable = false;
     }
 
     public void SetHighlighted()

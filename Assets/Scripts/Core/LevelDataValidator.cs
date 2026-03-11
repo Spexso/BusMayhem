@@ -38,6 +38,8 @@ public static class LevelDataValidator
         ValidateTimer(levelData, results);
         ValidateBusSequence(levelData, results);
         ValidateColorBalance(levelData, results);
+        ValidateExitRow(levelData, results);
+        ValidateAllCellsCanReachExit(levelData, results);
 
         return results;
     }
@@ -149,6 +151,22 @@ public static class LevelDataValidator
         }
     }
 
+    private static void ValidateExitRow(LevelData levelData, List<ValidationResult> results)
+    {
+        if (levelData.Cells == null || levelData.Cells.Length == 0)
+            return;
+
+        foreach (var cell in levelData.Cells)
+        {
+            if (cell.gridY == 0)
+                return;
+        }
+
+        results.Add(new ValidationResult(
+            ValidationSeverity.Error,
+            "No cell exists at row 0. At least one cell must be in the top row so stickmen can exit."));
+    }
+
     private static void ValidateColorBalance(LevelData levelData, List<ValidationResult> results)
     {
         if (levelData.Cells == null || levelData.BusSequence == null)
@@ -158,6 +176,9 @@ public static class LevelDataValidator
 
         foreach (var cell in levelData.Cells)
         {
+            if (cell.color == StickmanColor.None)
+                continue;
+
             if (!stickmanCounts.ContainsKey(cell.color))
                 stickmanCounts[cell.color] = 0;
             stickmanCounts[cell.color]++;
@@ -207,6 +228,38 @@ public static class LevelDataValidator
                 results.Add(new ValidationResult(
                     ValidationSeverity.Warning,
                     $"Bus color {color} is in the sequence but has no stickmen on the grid. That bus will never fill."));
+            }
+        }
+    }
+
+    private static void ValidateAllCellsCanReachExit(LevelData levelData, List<ValidationResult> results)
+    {
+        if (levelData.Cells == null || levelData.Cells.Length == 0)
+            return;
+
+        int width = levelData.GridWidth;
+        int height = levelData.GridHeight;
+
+        bool[,] painted = new bool[width, height];
+
+        foreach (var cell in levelData.Cells)
+        {
+            if (cell.gridX >= 0 && cell.gridX < width &&
+                cell.gridY >= 0 && cell.gridY < height)
+                painted[cell.gridX, cell.gridY] = true;
+        }
+
+        foreach (var cell in levelData.Cells)
+        {
+            if (cell.gridX < 0 || cell.gridX >= width ||
+                cell.gridY < 0 || cell.gridY >= height)
+                continue;
+
+            if (!PathFinder.BFSLevelEditor(painted, cell.gridX, cell.gridY))
+            {
+                results.Add(new ValidationResult(
+                    ValidationSeverity.Error,
+                    $"Cell at ({cell.gridX}, {cell.gridY}) has no valid path to the exit row (y=0)."));
             }
         }
     }

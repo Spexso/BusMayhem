@@ -31,14 +31,13 @@ public class GridManager : MonoBehaviour
         Instance = this;
     }
 
-    public void InitializeGrid(LevelData Data)
+    public void InitializeGrid(LevelData data)
     {
-        gridWidth = Data.GridWidth;
-        gridHeight = Data.GridHeight;
+        gridWidth = data.GridWidth;
+        gridHeight = data.GridHeight;
         cells = new GridCell[gridWidth, gridHeight];
 
-        SpawnCells();
-        SpawnStickmans(Data);
+        SpawnCells(data);
         RefreshHighlights();
     }
 
@@ -110,49 +109,61 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private void SpawnCells()
+    private void SpawnCells(LevelData data)
     {
-        for (int x = 0; x < gridWidth; x++)
+        int minX = int.MaxValue;
+        int maxX = int.MinValue;
+
+        CalculateXMinMaxDimensions(ref minX, ref maxX, data);
+
+        float offSetX = (minX + maxX) * cellSize * 0.5f;
+
+        foreach (ColoredCell coloredCell in data.Cells)
         {
-            for (int y = 0; y < gridHeight; y++)
+            Vector3 localPosition = new Vector3(coloredCell.gridX * cellSize - offSetX, 0f, -(coloredCell.gridY * cellSize));
+            GameObject cellObj = Instantiate(cellPrefab, Vector3.zero, cellPrefab.transform.rotation, this.transform);
+            cellObj.transform.localPosition = localPosition;
+            cellObj.name = $"Cell_{coloredCell.gridX}_{coloredCell.gridY}";
+
+            GridCell cell = cellObj.GetComponent<GridCell>();
+            if (cell == null)
             {
-                float offsetX = (gridWidth - 1) * cellSize * 0.5f;
-                Vector3 localPosition = new Vector3(x * cellSize - offsetX, 0f, -(y * cellSize));
-                GameObject CellObj = Instantiate(cellPrefab, Vector3.zero, cellPrefab.transform.rotation, this.transform);
-                CellObj.transform.localPosition = localPosition;
-
-                CellObj.name = $"Cell_{x}_{y}";
-                GridCell cell = CellObj.GetComponent<GridCell>();
-                if (cell == null)
-                {
-                    Debug.LogError($"[GridManager] GridCell component not found on prefab: {CellObj.name}");
-                    return;
-                }
-
-                cell.Initialize(x, y);
-                cells[x, y] = cell;
-            }
-        }
-    }
-
-    private void SpawnStickmans(LevelData levelData)
-    {
-        foreach (ColoredCell cell in levelData.Cells)
-        {
-            Vector3 position = cells[cell.gridX, cell.gridY].transform.position + Vector3.up * 0.5f;
-            GameObject obj = Instantiate(stickmanPrefab, position, Quaternion.identity, this.transform);
-
-            obj.name = $"Stickman_{cell.gridX}_{cell.gridY}";
-            StickmanController stickman = obj.GetComponent<StickmanController>();
-            if (stickman == null)
-            {
-                Debug.LogError($"[GridManager] StickmanController not found on prefab: {obj.name}");
+                Debug.LogError($"[GridManager] GridCell component not found on prefab: {cellObj.name}");
                 return;
             }
 
-            stickman.Initialize(cell.gridX, cell.gridY, cell.color);
-            cells[cell.gridX, cell.gridY].SetOccupant(stickman);
+            cell.Initialize(coloredCell.gridX, coloredCell.gridY);
+            cells[coloredCell.gridX, coloredCell.gridY] = cell;
+
+            if (coloredCell.color == StickmanColor.None)
+                continue;
+
+            Vector3 stickmanPosition = cellObj.transform.position + Vector3.up * 0.5f;
+            GameObject stickmanObj = Instantiate(stickmanPrefab, stickmanPosition, Quaternion.identity, this.transform);
+            stickmanObj.name = $"Stickman_{coloredCell.gridX}_{coloredCell.gridY}";
+
+            StickmanController stickman = stickmanObj.GetComponent<StickmanController>();
+            if (stickman == null)
+            {
+                Debug.LogError($"[GridManager] StickmanController not found on prefab: {stickmanObj.name}");
+                return;
+            }
+
+            stickman.Initialize(coloredCell.gridX, coloredCell.gridY, coloredCell.color);
+            cell.SetOccupant(stickman);
             stickmans.Add(stickman);
+        }
+    }
+
+    private void CalculateXMinMaxDimensions(ref int minX, ref int maxX, LevelData data)
+    {
+        minX = int.MaxValue;
+        maxX = int.MinValue;
+
+        foreach (ColoredCell coloredCell in data.Cells)
+        {
+            if (coloredCell.gridX < minX) minX = coloredCell.gridX;
+            if (coloredCell.gridX > maxX) maxX = coloredCell.gridX;
         }
     }
 

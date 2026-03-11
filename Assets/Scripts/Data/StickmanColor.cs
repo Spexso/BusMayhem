@@ -6,5 +6,7 @@ public enum StickmanColor
     Green,
     Yellow,
     Purple,
-    Orange
+    Orange,
+    Pink,
+    Cyan
 }

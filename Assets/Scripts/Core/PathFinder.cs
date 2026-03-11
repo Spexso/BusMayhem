@@ -45,6 +45,9 @@ public class PathFinder
                 if (visited[neighbour.x * height + neighbour.y])
                     continue;
 
+                if (cells[neighbour.x, neighbour.y] == null)
+                    continue;
+
                 if (neighbour != startCell && cells[neighbour.x, neighbour.y].IsOccupied)
                     continue;
 
@@ -55,6 +58,45 @@ public class PathFinder
         }
 
         return null;
+    }
+
+    // Level Editor version of BFS, used to check if the level is solvable.
+    public static bool BFSLevelEditor(bool[,] painted, int startX, int startY)
+    {
+        int width = painted.GetLength(0);
+        int height = painted.GetLength(1);
+        bool[] visited = new bool[width * height];
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
+
+        visited[startX * height + startY] = true;
+        queue.Enqueue(new Vector2Int(startX, startY));
+
+        while (queue.Count > 0)
+        {
+            Vector2Int currentCell = queue.Dequeue();
+
+            if (currentCell.y == 0)
+                return true;
+
+            foreach (var direction in directions)
+            {
+                Vector2Int neighbour = currentCell + direction;
+
+                if (!IsInBounds(neighbour, width, height))
+                    continue;
+
+                if (visited[neighbour.x * height + neighbour.y])
+                    continue;
+
+                if (!painted[neighbour.x, neighbour.y])
+                    continue;
+
+                visited[neighbour.x * height + neighbour.y] = true;
+                queue.Enqueue(neighbour);
+            }
+        }
+
+        return false;
     }
 
     private static bool IsInBounds(Vector2Int pos, int width, int height)

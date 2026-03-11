@@ -66,7 +66,8 @@ public class WaitingAreaManager : MonoBehaviour
         }
 
         waitingPassengers.Add(stickman);
-        stickman.transform.position = slotPositions[waitingPassengers.Count - 1] + Vector3.up * 0.5f; ;
+        stickman.DisableInteraction();
+        stickman.transform.position = slotPositions[waitingPassengers.Count - 1] + Vector3.up * 0.5f;
 
         CheckWaitingAreaFull();
     }

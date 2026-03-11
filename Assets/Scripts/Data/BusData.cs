@@ -10,4 +10,10 @@ public class BusData
     // Methods
     public int Capacity => capacity;
     public StickmanColor Color => color;
+
+    public BusData(StickmanColor color, int capacity)
+    {
+        this.color = color;
+        this.capacity = capacity;
+    }
 }
