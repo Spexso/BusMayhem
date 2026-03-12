@@ -233,6 +233,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levels:
   - {fileID: 11400000, guid: 1fa327f85c52ee7459500549c96f7290, type: 2}
+  - {fileID: 11400000, guid: 9d7cd489ded72024b876b22c16ba9058, type: 2}
+  - {fileID: 11400000, guid: 48a25286e58fa0d47aa9480831ba63ee, type: 2}
+  - {fileID: 11400000, guid: 484bbb3e85d89f34bb74195b86060bc6, type: 2}
+  - {fileID: 11400000, guid: a07e590a22b06b64e9b73727babe301f, type: 2}
 --- !u!1 &270990362
 GameObject:
   m_ObjectHideFlags: 0
@@ -730,14 +734,14 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 0
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
