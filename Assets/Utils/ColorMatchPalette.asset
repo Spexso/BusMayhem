@@ -22,6 +22,10 @@ MonoBehaviour:
   - color: 4
     unityColor: {r: 0.9811321, g: 0.9776245, b: 0, a: 0}
   - color: 5
-    unityColor: {r: 1, g: 0, b: 0.804821, a: 0}
+    unityColor: {r: 0.41698217, g: 0, b: 1, a: 0}
+  - color: 7
+    unityColor: {r: 0.9433962, g: 0.11124954, b: 0.83319575, a: 0}
+  - color: 8
+    unityColor: {r: 0, g: 0.98039216, b: 0.9399323, a: 0}
   - color: 6
     unityColor: {r: 0.98039216, g: 0.39392114, b: 0, a: 0}

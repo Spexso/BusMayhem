@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -41,10 +39,19 @@ public class GridManager : MonoBehaviour
         RefreshHighlights();
     }
 
+    public bool HasAnyStickmen()
+    {
+        return stickmans.Count > 0;
+    }
+
     public bool IsColumnClear(int x, int fromY)
     {
         for (int y = fromY; y >= 0; y--)
         {
+            // Guard
+            if (cells[x, y] == null)
+                continue;
+
             if (cells[x, y].IsOccupied)
                 return false;
         }

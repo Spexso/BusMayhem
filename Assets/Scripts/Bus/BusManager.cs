@@ -16,8 +16,8 @@ public class BusManager : MonoBehaviour
     private BusController activeBus;
     private bool isTransitioning;
 
-    public event Action onAllBusesDeparted;
-    public event Action<StickmanColor> onActiveBusChanged;
+    public event Action OnBusDepart;
+    public event Action<StickmanColor> OnActiveBusChanged;
 
     // Misc
     public static BusManager Instance { get; private set; }
@@ -82,12 +82,13 @@ public class BusManager : MonoBehaviour
     {
         if (busQueue.Count == 0)
         {
-            onAllBusesDeparted?.Invoke();
+            OnBusDepart?.Invoke();
             return;
         }
 
         BusData nextBusData = busQueue.Dequeue();
         GameObject busObj = Instantiate(busPrefab, busSpawnTransform.position, Quaternion.identity);
+
         BusController bus = busObj.GetComponent<BusController>();
         if (bus == null)
         {
@@ -98,10 +99,10 @@ public class BusManager : MonoBehaviour
 
         bus.Initialize(nextBusData);
         bus.onBusFull += HandleBusFull;
-
         activeBus = bus;
+
         StartCoroutine(MoveBusToStop(bus));
-        onActiveBusChanged?.Invoke(bus.BusColor);
+        OnActiveBusChanged?.Invoke(bus.BusColor);
     }
 
     private void HandleBusFull(BusController bus)
@@ -139,6 +140,7 @@ public class BusManager : MonoBehaviour
         Destroy(bus.gameObject);
         isTransitioning = false;
 
+        OnBusDepart?.Invoke();
         SpawnNextBus();
     }
 }

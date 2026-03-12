@@ -18,14 +18,13 @@ public class StickmanController : MonoBehaviour
     private Renderer meshRenderer;
     private bool IsInteractable = true;
 
-
-    // Methods
     public int GridX => gridX;
     public int GridY => gridY;
     public StickmanColor CColor => stickmanColor;
     public bool IsMoving => isMoving;
     public bool IsInteractionEnabled => IsInteractable;
 
+    // Methods
     public void Initialize(int x, int y, StickmanColor color)
     {
         gridX = x;
@@ -92,6 +91,7 @@ public class StickmanController : MonoBehaviour
         }
 
         isMoving = false;
+        GameManager.Instance.OnStickmanWalkEnded();
         onComplete?.Invoke();
     }
 }

@@ -1,6 +1,8 @@
 using UnityEngine;
 
+// Deprecated : This class is no longer responsible for initializing the game. The GameManager now handles all initialization logic, including setting up the grid, bus, and waiting area.
 public class GameBootstrap : MonoBehaviour
+
 {
     // Fields
     [SerializeField] private GridManager gridManager;

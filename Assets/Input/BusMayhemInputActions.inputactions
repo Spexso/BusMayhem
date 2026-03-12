@@ -70,6 +70,45 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "StartScene",
+            "id": "b8abefeb-f41b-49cd-af65-c1e56e5a7e85",
+            "actions": [
+                {
+                    "name": "Tap",
+                    "type": "Button",
+                    "id": "15c6a63f-71ae-4b00-aaa5-f3a91d7f9b1c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c6ee33f5-7988-4deb-a1d9-1ba753398a85",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d5c1d754-597c-4d60-b36b-535cc13d53d3",
+                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

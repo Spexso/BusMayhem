@@ -57,11 +57,16 @@ public class WaitingAreaManager : MonoBehaviour
         return waitingPassengers.Count < slotCount;
     }
 
+    public bool HasAnyStickmans()
+    {
+        return waitingPassengers.Count > 0;
+    }
+
     public void AddToWaiting(StickmanController stickman)
     {
         if (!HasFreeSlot())
         {
-            CheckWaitingAreaFull();
+            OnWaitingAreaFull?.Invoke();
             return;
         }
 
@@ -69,7 +74,8 @@ public class WaitingAreaManager : MonoBehaviour
         stickman.DisableInteraction();
         stickman.transform.position = slotPositions[waitingPassengers.Count - 1] + Vector3.up * 0.5f;
 
-        CheckWaitingAreaFull();
+        if (!HasFreeSlot())
+            OnWaitingAreaFull?.Invoke();
     }
 
     public void TryBoardWaitingPassengers()
@@ -86,19 +92,12 @@ public class WaitingAreaManager : MonoBehaviour
         }
 
         RefreshSlotPositions();
-        CheckWaitingAreaFull();
     }
 
     private void RefreshSlotPositions()
     {
         for (int i = 0; i < waitingPassengers.Count; i++)
             waitingPassengers[i].transform.position = slotPositions[i];
-    }
-
-    private void CheckWaitingAreaFull()
-    {
-        if (!HasFreeSlot())
-            OnWaitingAreaFull?.Invoke();
     }
 
     private void HideDebugPlane()

@@ -92,6 +92,45 @@ public partial class @BusMayhemInputActions: IInputActionCollection2, IDisposabl
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""StartScene"",
+            ""id"": ""b8abefeb-f41b-49cd-af65-c1e56e5a7e85"",
+            ""actions"": [
+                {
+                    ""name"": ""Tap"",
+                    ""type"": ""Button"",
+                    ""id"": ""15c6a63f-71ae-4b00-aaa5-f3a91d7f9b1c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""c6ee33f5-7988-4deb-a1d9-1ba753398a85"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d5c1d754-597c-4d60-b36b-535cc13d53d3"",
+                    ""path"": ""<Touchscreen>/primaryTouch/tap"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -100,6 +139,9 @@ public partial class @BusMayhemInputActions: IInputActionCollection2, IDisposabl
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
         m_Gameplay_Tap = m_Gameplay.FindAction("Tap", throwIfNotFound: true);
         m_Gameplay_TapPosition = m_Gameplay.FindAction("TapPosition", throwIfNotFound: true);
+        // StartScene
+        m_StartScene = asset.FindActionMap("StartScene", throwIfNotFound: true);
+        m_StartScene_Tap = m_StartScene.FindAction("Tap", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -211,9 +253,59 @@ public partial class @BusMayhemInputActions: IInputActionCollection2, IDisposabl
         }
     }
     public GameplayActions @Gameplay => new GameplayActions(this);
+
+    // StartScene
+    private readonly InputActionMap m_StartScene;
+    private List<IStartSceneActions> m_StartSceneActionsCallbackInterfaces = new List<IStartSceneActions>();
+    private readonly InputAction m_StartScene_Tap;
+    public struct StartSceneActions
+    {
+        private @BusMayhemInputActions m_Wrapper;
+        public StartSceneActions(@BusMayhemInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Tap => m_Wrapper.m_StartScene_Tap;
+        public InputActionMap Get() { return m_Wrapper.m_StartScene; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(StartSceneActions set) { return set.Get(); }
+        public void AddCallbacks(IStartSceneActions instance)
+        {
+            if (instance == null || m_Wrapper.m_StartSceneActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_StartSceneActionsCallbackInterfaces.Add(instance);
+            @Tap.started += instance.OnTap;
+            @Tap.performed += instance.OnTap;
+            @Tap.canceled += instance.OnTap;
+        }
+
+        private void UnregisterCallbacks(IStartSceneActions instance)
+        {
+            @Tap.started -= instance.OnTap;
+            @Tap.performed -= instance.OnTap;
+            @Tap.canceled -= instance.OnTap;
+        }
+
+        public void RemoveCallbacks(IStartSceneActions instance)
+        {
+            if (m_Wrapper.m_StartSceneActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IStartSceneActions instance)
+        {
+            foreach (var item in m_Wrapper.m_StartSceneActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_StartSceneActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public StartSceneActions @StartScene => new StartSceneActions(this);
     public interface IGameplayActions
     {
         void OnTap(InputAction.CallbackContext context);
         void OnTapPosition(InputAction.CallbackContext context);
+    }
+    public interface IStartSceneActions
+    {
+        void OnTap(InputAction.CallbackContext context);
     }
 }
