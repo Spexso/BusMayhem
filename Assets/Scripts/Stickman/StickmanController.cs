@@ -8,6 +8,7 @@ public class StickmanController : MonoBehaviour
     // Fields
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float arrivalThreshold = 0.01f;
+    [SerializeField] private Renderer meshRenderer;
 
     private float activeEmissionColorStrength = 0.6f;
     private float passiveEmissionColorStrength = 0.4f;
@@ -15,7 +16,6 @@ public class StickmanController : MonoBehaviour
     private int gridY;
     private StickmanColor stickmanColor;
     private bool isMoving;
-    private Renderer meshRenderer;
     private bool IsInteractable = true;
 
     public int GridX => gridX;
@@ -31,7 +31,6 @@ public class StickmanController : MonoBehaviour
         gridY = y;
         stickmanColor = color;
 
-        meshRenderer = GetComponentInChildren<Renderer>();
         if (meshRenderer == null)
         {
             Debug.LogError($"[StickmanController] Renderer not found on {gameObject.name}.");
