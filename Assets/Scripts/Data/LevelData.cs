@@ -17,6 +17,9 @@ public class LevelData : ScriptableObject
     [Header("Passengers")]
     [SerializeField] private ColoredCell[] cells;
 
+    [Header("Houses")]
+    [SerializeField] private HouseData[] houses;
+
     [Header("Buses")]
     [SerializeField] private BusData[] busSequence;
 
@@ -24,6 +27,7 @@ public class LevelData : ScriptableObject
     public int GridWidth => gridWidth;
     public int GridHeight => gridHeight;
     public ColoredCell[] Cells => cells;
+    public HouseData[] Houses => houses;
     public BusData[] BusSequence => busSequence;
     public float TimerDuration => timerDuration;
     public int WaitingAreaSize => waitingAreaSize;

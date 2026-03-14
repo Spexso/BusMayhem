@@ -2607,6 +2607,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 48a25286e58fa0d47aa9480831ba63ee, type: 2}
   - {fileID: 11400000, guid: 484bbb3e85d89f34bb74195b86060bc6, type: 2}
   - {fileID: 11400000, guid: a07e590a22b06b64e9b73727babe301f, type: 2}
+  - {fileID: 11400000, guid: aa00e2dbf905a5e499ef4fd2b6a3446a, type: 2}
+  - {fileID: 11400000, guid: b383116d68be1364690f46156935c54a, type: 2}
+  - {fileID: 11400000, guid: 2dcb37ad6225bc947b49ffefc48c73a9, type: 2}
+  - {fileID: 11400000, guid: 411bd69021c2d884792551986914dc73, type: 2}
+  - {fileID: 11400000, guid: 1ff47f44d7ec0e542bf6be0d6a4f006e, type: 2}
+  - {fileID: 11400000, guid: 685ed69cb87605e43b4cb355f9922c67, type: 2}
+  - {fileID: 11400000, guid: 31daa5beb8d8f9b439543ed8775d2d40, type: 2}
+  - {fileID: 11400000, guid: a0bc72923bcbc41409bd0c5ba2da0ed0, type: 2}
+  - {fileID: 11400000, guid: 3508a9e6119c7964393b92282d6f4aba, type: 2}
+  - {fileID: 11400000, guid: e0fb251835f895e43b81abcd966dde69, type: 2}
 --- !u!1001 &236815496
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3174,6 +3184,7 @@ MonoBehaviour:
   cellPrefab: {fileID: 8659581636745977624, guid: 2fb05cd397103b74dbe549dd78f2e10e, type: 3}
   stickmanPrefab: {fileID: 2829477119029406347, guid: a68d4f2d4f2bdf74eb8cae8b83ddc9bc, type: 3}
   borderTilePrefab: {fileID: 8659581636745977624, guid: 12e655982e1f6cf40b9ab93be33cae92, type: 3}
+  housePrefab: {fileID: 2180352021760798761, guid: 49387088d316b5747a61a44e023bd4cb, type: 3}
   cellSize: 1
 --- !u!1001 &272822990
 PrefabInstance:
@@ -9787,9 +9798,9 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 63
+  field of view: 90
   orthographic: 0
-  orthographic size: 20.9
+  orthographic size: 11
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -9814,7 +9825,7 @@ Transform:
   m_GameObject: {fileID: 856057433}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40992305, y: 0, z: 0, w: 0.91212016}
-  m_LocalPosition: {x: 2, y: 13.75, z: -7.82}
+  m_LocalPosition: {x: 2, y: 9.88, z: -3.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -23625,7 +23636,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 0.9632353, g: 0.9620631, b: 0.92073965, a: 1}
-  m_Intensity: 1
+  m_Intensity: 1.32
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208

@@ -7,10 +7,11 @@ using UnityEngine;
 /// </summary>
 public class GridManager : MonoBehaviour
 {
-    // Fields 
+    // Fields
     [SerializeField] private GameObject cellPrefab;
     [SerializeField] private GameObject stickmanPrefab;
     [SerializeField] private GameObject borderTilePrefab;
+    [SerializeField] private GameObject housePrefab;
     [SerializeField] private float cellSize = 1f;
 
     private int gridWidth;
@@ -46,6 +47,7 @@ public class GridManager : MonoBehaviour
         float offsetX = (minX + maxX) * cellSize * 0.5f;
 
         SpawnCells(data, offsetX);
+        SpawnHouses(data, offsetX);
         SpawnBorderTiles(data, offsetX);
         RefreshHighlights();
     }
@@ -55,11 +57,18 @@ public class GridManager : MonoBehaviour
         return stickmans.Count > 0;
     }
 
+    public GridCell GetCell(int x, int y)
+    {
+        if (x < 0 || x >= gridWidth || y < 0 || y >= gridHeight)
+            return null;
+
+        return cells[x, y];
+    }
+
     public bool IsColumnClear(int x, int fromY)
     {
         for (int y = fromY; y >= 0; y--)
         {
-            // Guard
             if (cells[x, y] == null)
                 continue;
 
@@ -67,6 +76,38 @@ public class GridManager : MonoBehaviour
                 return false;
         }
         return true;
+    }
+
+    public void SpawnStickmanAtCell(int x, int y, StickmanColor color)
+    {
+        if (cells[x, y] == null)
+        {
+            Debug.LogError($"[GridManager] SpawnStickmanAtCell: cell at ({x},{y}) is null.");
+            return;
+        }
+
+        if (cells[x, y].IsOccupied)
+        {
+            Debug.LogError($"[GridManager] SpawnStickmanAtCell: cell at ({x},{y}) is already occupied.");
+            return;
+        }
+
+        Vector3 spawnPosition = cells[x, y].transform.position;
+        GameObject stickmanObj = Instantiate(stickmanPrefab, spawnPosition, Quaternion.identity, this.transform);
+        stickmanObj.name = $"Stickman_{x}_{y}";
+
+        StickmanController stickman = stickmanObj.GetComponent<StickmanController>();
+        if (stickman == null)
+        {
+            Debug.LogError($"[GridManager] SpawnStickmanAtCell: StickmanController not found on prefab at ({x},{y}).");
+            return;
+        }
+
+        stickman.Initialize(x, y, color, false);
+        cells[x, y].SetOccupant(stickman);
+        stickmans.Add(stickman);
+
+        RefreshHighlights();
     }
 
     private Vector3[] BuildWorldPath(List<Vector2Int> gridPath, StickmanController stickman)
@@ -97,7 +138,6 @@ public class GridManager : MonoBehaviour
 
         List<Vector2Int> gridPath = PathFinder.BFS(cells, stickman.GridX, stickman.GridY);
 
-        // Stickman unable to move
         if (gridPath == null)
         {
             stickman.PlayBlockedFeedback();
@@ -145,11 +185,11 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private void SpawnCells(LevelData data, float offSetX)
+    private void SpawnCells(LevelData data, float offsetX)
     {
         foreach (ColoredCell coloredCell in data.Cells)
         {
-            Vector3 localPosition = new Vector3(coloredCell.gridX * cellSize - offSetX, 0f, -(coloredCell.gridY * cellSize));
+            Vector3 localPosition = new Vector3(coloredCell.gridX * cellSize - offsetX, 0f, -(coloredCell.gridY * cellSize));
             GameObject cellObj = Instantiate(cellPrefab, Vector3.zero, cellPrefab.transform.rotation, this.transform);
             cellObj.transform.localPosition = localPosition;
             cellObj.name = $"Cell_{coloredCell.gridX}_{coloredCell.gridY}";
@@ -184,6 +224,62 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    private void SpawnHouses(LevelData data, float offsetX)
+    {
+        if (housePrefab == null)
+        {
+            Debug.LogError("[GridManager] housePrefab is not assigned.");
+            return;
+        }
+
+        if (data.Houses == null || data.Houses.Length == 0)
+            return;
+
+        foreach (HouseData houseData in data.Houses)
+        {
+            int x = houseData.GridX;
+            int y = houseData.GridY;
+
+            if (x < 0 || x >= gridWidth || y < 0 || y >= gridHeight)
+            {
+                Debug.LogError($"[GridManager] House at ({x},{y}) is out of grid bounds.");
+                continue;
+            }
+
+            if (cells[x, y] == null)
+            {
+                Vector3 localPosition = new Vector3(x * cellSize - offsetX, 0f, -(y * cellSize));
+                GameObject cellObj = Instantiate(cellPrefab, Vector3.zero, cellPrefab.transform.rotation, this.transform);
+                cellObj.transform.localPosition = localPosition;
+                cellObj.name = $"Cell_{x}_{y}";
+
+                GridCell cell = cellObj.GetComponent<GridCell>();
+                if (cell == null)
+                {
+                    Debug.LogError($"[GridManager] GridCell component not found on house cell prefab at ({x},{y}).");
+                    continue;
+                }
+
+                cell.Initialize(x, y);
+                cells[x, y] = cell;
+            }
+
+            Vector3 housePosition = cells[x, y].transform.position;
+            GameObject houseObj = Instantiate(housePrefab, housePosition, housePrefab.transform.rotation, this.transform);
+            houseObj.name = $"House_{x}_{y}";
+
+            HouseController houseController = houseObj.GetComponent<HouseController>();
+            if (houseController == null)
+            {
+                Debug.LogError($"[GridManager] HouseController not found on housePrefab at ({x},{y}).");
+                continue;
+            }
+
+            houseController.Initialize(x, y, houseData.StickmanQueue);
+            cells[x, y].SetHouse(houseController);
+        }
+    }
+
     private void SpawnBorderTiles(LevelData data, float offsetX)
     {
         if (borderTilePrefab == null)
@@ -196,9 +292,14 @@ public class GridManager : MonoBehaviour
         foreach (ColoredCell coloredCell in data.Cells)
             paintedPositions.Add(new Vector2Int(coloredCell.gridX, coloredCell.gridY));
 
+        if (data.Houses != null)
+        {
+            foreach (HouseData houseData in data.Houses)
+                paintedPositions.Add(new Vector2Int(houseData.GridX, houseData.GridY));
+        }
+
         HashSet<Vector2> spawnedMidpoints = new HashSet<Vector2>();
 
-        // Directions: right, down, left, up, and diagonals
         int[] dirX = { 1, 0, -1, 0, 1, -1, -1, 1 };
         int[] dirY = { 0, 1, 0, -1, 1, 1, -1, -1 };
 
@@ -236,11 +337,19 @@ public class GridManager : MonoBehaviour
             if (coloredCell.gridX < minX) minX = coloredCell.gridX;
             if (coloredCell.gridX > maxX) maxX = coloredCell.gridX;
         }
+
+        if (data.Houses != null)
+        {
+            foreach (HouseData houseData in data.Houses)
+            {
+                if (houseData.GridX < minX) minX = houseData.GridX;
+                if (houseData.GridX > maxX) maxX = houseData.GridX;
+            }
+        }
     }
 
     private void OnStickmanReachedExit(StickmanController stickman)
     {
-        // Leave decision to PassengerRouter
         PassengerRouter.Instance?.RoutePassenger(stickman);
     }
 }

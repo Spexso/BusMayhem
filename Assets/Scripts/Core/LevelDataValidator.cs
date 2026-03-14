@@ -36,6 +36,7 @@ public static class LevelDataValidator
         ValidateDuplicateCells(levelData, results);
         ValidateTimer(levelData, results);
         ValidateBusSequence(levelData, results);
+        ValidateHouses(levelData, results);
         ValidateColorBalance(levelData, results);
         ValidateExitRow(levelData, results);
         ValidateAllCellsCanReachExit(levelData, results);
@@ -148,6 +149,65 @@ public static class LevelDataValidator
         }
     }
 
+    private static void ValidateHouses(LevelData levelData, List<ValidationResult> results)
+    {
+        if (levelData.Houses == null || levelData.Houses.Length == 0)
+            return;
+
+        var occupiedByCell = new HashSet<string>();
+        if (levelData.Cells != null)
+        {
+            foreach (var cell in levelData.Cells)
+                occupiedByCell.Add($"{cell.gridX},{cell.gridY}");
+        }
+
+        var seenHousePositions = new HashSet<string>();
+
+        for (int i = 0; i < levelData.Houses.Length; i++)
+        {
+            var house = levelData.Houses[i];
+
+            if (house == null)
+            {
+                results.Add(new ValidationResult(
+                    ValidationSeverity.Error,
+                    $"House at index {i} is null."));
+                continue;
+            }
+
+            if (house.GridX < 0 || house.GridX >= levelData.GridWidth ||
+                house.GridY < 0 || house.GridY >= levelData.GridHeight)
+            {
+                results.Add(new ValidationResult(
+                    ValidationSeverity.Error,
+                    $"House at index {i} position ({house.GridX},{house.GridY}) is out of grid bounds."));
+            }
+
+            string posKey = $"{house.GridX},{house.GridY}";
+
+            if (!seenHousePositions.Add(posKey))
+            {
+                results.Add(new ValidationResult(
+                    ValidationSeverity.Error,
+                    $"Duplicate house position at ({house.GridX},{house.GridY})."));
+            }
+
+            if (occupiedByCell.Contains(posKey))
+            {
+                results.Add(new ValidationResult(
+                    ValidationSeverity.Error,
+                    $"House at ({house.GridX},{house.GridY}) overlaps with an existing cell."));
+            }
+
+            if (house.StickmanQueue == null || house.StickmanQueue.Length == 0)
+            {
+                results.Add(new ValidationResult(
+                    ValidationSeverity.Warning,
+                    $"House at ({house.GridX},{house.GridY}) has an empty stickman queue."));
+            }
+        }
+    }
+
     private static void ValidateExitRow(LevelData levelData, List<ValidationResult> results)
     {
         if (levelData.Cells == null || levelData.Cells.Length == 0)
@@ -181,6 +241,25 @@ public static class LevelDataValidator
             stickmanCounts[cell.color]++;
         }
 
+        if (levelData.Houses != null)
+        {
+            foreach (var house in levelData.Houses)
+            {
+                if (house?.StickmanQueue == null)
+                    continue;
+
+                foreach (StickmanColor color in house.StickmanQueue)
+                {
+                    if (color == StickmanColor.None)
+                        continue;
+
+                    if (!stickmanCounts.ContainsKey(color))
+                        stickmanCounts[color] = 0;
+                    stickmanCounts[color]++;
+                }
+            }
+        }
+
         var busCapacityPerColor = new Dictionary<StickmanColor, int>();
 
         foreach (var bus in levelData.BusSequence)
@@ -202,7 +281,7 @@ public static class LevelDataValidator
             {
                 results.Add(new ValidationResult(
                     ValidationSeverity.Error,
-                    $"Color {color} has {stickmanCount} stickman(s) on the grid but no bus of that color exists in the sequence."));
+                    $"Color {color} has {stickmanCount} stickman(s) (grid + houses) but no bus of that color exists in the sequence."));
                 continue;
             }
 
@@ -212,7 +291,7 @@ public static class LevelDataValidator
             {
                 results.Add(new ValidationResult(
                     ValidationSeverity.Warning,
-                    $"Color {color}: {stickmanCount} stickman(s) on grid but total bus capacity is {totalCapacity}. They may not all board cleanly."));
+                    $"Color {color}: {stickmanCount} stickman(s) total (grid + houses) but total bus capacity is {totalCapacity}. They may not all board cleanly."));
             }
         }
 
@@ -224,7 +303,7 @@ public static class LevelDataValidator
             {
                 results.Add(new ValidationResult(
                     ValidationSeverity.Warning,
-                    $"Bus color {color} is in the sequence but has no stickmen on the grid. That bus will never fill."));
+                    $"Bus color {color} is in the sequence but has no stickmen on the grid or in any house. That bus will never fill."));
             }
         }
     }
@@ -244,6 +323,19 @@ public static class LevelDataValidator
             if (cell.gridX >= 0 && cell.gridX < width &&
                 cell.gridY >= 0 && cell.gridY < height)
                 painted[cell.gridX, cell.gridY] = true;
+        }
+
+        if (levelData.Houses != null)
+        {
+            foreach (var house in levelData.Houses)
+            {
+                if (house == null)
+                    continue;
+
+                if (house.GridX >= 0 && house.GridX < width &&
+                    house.GridY >= 0 && house.GridY < height)
+                    painted[house.GridX, house.GridY] = true;
+            }
         }
 
         foreach (var cell in levelData.Cells)

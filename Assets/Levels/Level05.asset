@@ -89,6 +89,7 @@ MonoBehaviour:
     gridY: 3
     color: 4
     isHidden: 0
+  houses: []
   busSequence:
   - capacity: 3
     color: 3

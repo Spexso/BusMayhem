@@ -40,12 +40,18 @@ public class LevelEditorWindow : EditorWindow
     private int workingWaitingAreaSize;
     private List<ColoredCell> workingCells = new List<ColoredCell>();
     private List<BusData> workingBusSequence = new List<BusData>();
+    private List<HouseData> workingHouses = new List<HouseData>();
 
     // Fields - painting
 
+    private enum PaintMode { Color, Hidden, House }
+    private PaintMode currentPaintMode = PaintMode.Color;
     private StickmanColor selectedPaintColor = StickmanColor.Red;
-    private bool paintHidden = false;
     private bool isDirty = false;
+
+    // Fields - house editing
+
+    private int selectedHouseIndex = -1;
 
     // Fields - validation
 
@@ -78,6 +84,7 @@ public class LevelEditorWindow : EditorWindow
     }
 
     // Methods - panels
+
     private void DrawLeftPanel()
     {
         EditorGUILayout.BeginVertical(GUILayout.Width(LeftPanelWidth));
@@ -144,7 +151,6 @@ public class LevelEditorWindow : EditorWindow
             return;
         }
 
-
         EditorGUILayout.LabelField("Grid Canvas", EditorStyles.boldLabel);
         EditorGUILayout.Space(4);
 
@@ -192,6 +198,8 @@ public class LevelEditorWindow : EditorWindow
         EditorGUILayout.Space(8);
         DrawBusSequence();
         EditorGUILayout.Space(8);
+        DrawHouseSection();
+        EditorGUILayout.Space(8);
         DrawValidationSection();
         EditorGUILayout.Space(8);
         DrawSaveButton();
@@ -204,12 +212,12 @@ public class LevelEditorWindow : EditorWindow
 
     private void DrawColorPalette()
     {
-        EditorGUILayout.LabelField("Paint Color", EditorStyles.miniBoldLabel);
+        EditorGUILayout.LabelField("Paint Mode", EditorStyles.miniBoldLabel);
         EditorGUILayout.BeginHorizontal();
 
         foreach (StickmanColor color in System.Enum.GetValues(typeof(StickmanColor)))
         {
-            bool isSelected = !paintHidden && color == selectedPaintColor;
+            bool isSelected = currentPaintMode == PaintMode.Color && color == selectedPaintColor;
             GUIStyle style = new GUIStyle(GUI.skin.button);
 
             if (isSelected)
@@ -223,23 +231,42 @@ public class LevelEditorWindow : EditorWindow
             if (GUILayout.Button(label, style, GUILayout.Width(PaletteButtonSize * 2f), GUILayout.Height(PaletteButtonSize)))
             {
                 selectedPaintColor = color;
-                paintHidden = false;
+                currentPaintMode = PaintMode.Color;
+                selectedHouseIndex = -1;
             }
 
             GUI.backgroundColor = prev;
         }
 
         GUIStyle hiddenStyle = new GUIStyle(GUI.skin.button);
-        if (paintHidden)
+        if (currentPaintMode == PaintMode.Hidden)
             hiddenStyle.normal.background = MakeTex(2, 2, new Color(1f, 1f, 1f, 0.4f));
 
         Color prevHidden = GUI.backgroundColor;
         GUI.backgroundColor = Color.black;
 
         if (GUILayout.Button("Hidden", hiddenStyle, GUILayout.Width(PaletteButtonSize * 2f), GUILayout.Height(PaletteButtonSize)))
-            paintHidden = true;
+        {
+            currentPaintMode = PaintMode.Hidden;
+            selectedHouseIndex = -1;
+        }
 
         GUI.backgroundColor = prevHidden;
+
+        GUIStyle houseStyle = new GUIStyle(GUI.skin.button);
+        if (currentPaintMode == PaintMode.House)
+            houseStyle.normal.background = MakeTex(2, 2, new Color(1f, 1f, 1f, 0.4f));
+
+        Color prevHouse = GUI.backgroundColor;
+        GUI.backgroundColor = new Color(0.6f, 0.4f, 0.2f);
+
+        if (GUILayout.Button("House", houseStyle, GUILayout.Width(PaletteButtonSize * 2f), GUILayout.Height(PaletteButtonSize)))
+        {
+            currentPaintMode = PaintMode.House;
+            selectedHouseIndex = -1;
+        }
+
+        GUI.backgroundColor = prevHouse;
 
         EditorGUILayout.EndHorizontal();
     }
@@ -261,28 +288,48 @@ public class LevelEditorWindow : EditorWindow
                     CellDrawSize - 1f);
 
                 ColoredCell? existingCell = FindCell(x, y);
+                HouseData existingHouse = FindHouse(x, y);
 
                 Color cellColor;
-                bool showHiddenLabel = false;
+                string cellLabel = "";
 
-                if (!existingCell.HasValue)
+                if (existingHouse != null)
+                {
+                    int houseIdx = workingHouses.IndexOf(existingHouse);
+                    bool isSelectedHouse = houseIdx == selectedHouseIndex;
+                    cellColor = isSelectedHouse
+                        ? new Color(1f, 0.7f, 0.2f)
+                        : new Color(0.6f, 0.4f, 0.2f);
+                    cellLabel = $"H({existingHouse.StickmanQueue?.Length ?? 0})";
+                }
+                else if (!existingCell.HasValue)
+                {
                     cellColor = new Color(0.15f, 0.15f, 0.15f);
+                }
                 else if (existingCell.Value.isHidden)
                 {
                     cellColor = Color.black;
-                    showHiddenLabel = true;
+                    cellLabel = "H";
                 }
                 else if (existingCell.Value.color == StickmanColor.None)
+                {
                     cellColor = new Color(0.45f, 0.45f, 0.45f);
+                }
                 else
+                {
                     cellColor = GetColorForStickmanColor(existingCell.Value.color);
+                }
 
                 EditorGUI.DrawRect(cellRect, cellColor);
                 EditorGUI.DrawRect(new Rect(cellRect.x, cellRect.y, cellRect.width, 1f), Color.black);
                 EditorGUI.DrawRect(new Rect(cellRect.x, cellRect.y, 1f, cellRect.height), Color.black);
 
-                if (showHiddenLabel)
-                    GUI.Label(cellRect, "H", new GUIStyle(EditorStyles.boldLabel) { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } });
+                if (!string.IsNullOrEmpty(cellLabel))
+                    GUI.Label(cellRect, cellLabel, new GUIStyle(EditorStyles.boldLabel)
+                    {
+                        alignment = TextAnchor.MiddleCenter,
+                        normal = { textColor = Color.white }
+                    });
 
                 if (Event.current.type == EventType.MouseDown && cellRect.Contains(Event.current.mousePosition))
                 {
@@ -297,6 +344,7 @@ public class LevelEditorWindow : EditorWindow
             }
         }
     }
+
     // Methods - right panel sections
 
     private void DrawGridSizeFields()
@@ -427,8 +475,125 @@ public class LevelEditorWindow : EditorWindow
 
         if (GUILayout.Button("Add Bus"))
         {
-            BusData newBus = CreateBusData(StickmanColor.Red, 3);
-            workingBusSequence.Add(newBus);
+            workingBusSequence.Add(CreateBusData(StickmanColor.Red, 3));
+            isDirty = true;
+        }
+    }
+
+    private void DrawHouseSection()
+    {
+        EditorGUILayout.LabelField("Houses", EditorStyles.miniBoldLabel);
+
+        if (workingHouses.Count == 0)
+        {
+            EditorGUILayout.LabelField("No houses placed. Select House paint mode and click a cell.", EditorStyles.miniLabel);
+            return;
+        }
+
+        for (int i = 0; i < workingHouses.Count; i++)
+        {
+            HouseData house = workingHouses[i];
+            bool isSelected = i == selectedHouseIndex;
+
+            GUIStyle rowStyle = new GUIStyle(GUI.skin.box);
+            if (isSelected)
+                rowStyle.normal.background = MakeTex(2, 2, new Color(1f, 0.7f, 0.2f, 0.2f));
+
+            EditorGUILayout.BeginVertical(rowStyle);
+            EditorGUILayout.BeginHorizontal();
+
+            EditorGUILayout.LabelField($"House ({house.GridX},{house.GridY})", GUILayout.Width(100));
+
+            if (GUILayout.Button(isSelected ? "collapse" : "edit", GUILayout.Width(56)))
+            {
+                selectedHouseIndex = isSelected ? -1 : i;
+                Repaint();
+            }
+
+            if (GUILayout.Button("x", GUILayout.Width(20)))
+            {
+                if (selectedHouseIndex == i)
+                    selectedHouseIndex = -1;
+                workingHouses.RemoveAt(i);
+                isDirty = true;
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.EndVertical();
+                break;
+            }
+
+            EditorGUILayout.EndHorizontal();
+
+            if (isSelected)
+                DrawHouseQueueEditor(i);
+
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space(2);
+        }
+    }
+
+    private void DrawHouseQueueEditor(int houseIndex)
+    {
+        HouseData house = workingHouses[houseIndex];
+        List<StickmanColor> queue = new List<StickmanColor>(house.StickmanQueue ?? new StickmanColor[0]);
+
+        EditorGUILayout.LabelField("Stickman Queue (top = first dispensed)", EditorStyles.miniLabel);
+
+        for (int i = 0; i < queue.Count; i++)
+        {
+            EditorGUILayout.BeginHorizontal();
+
+            EditorGUILayout.LabelField($"  {i + 1}.", GUILayout.Width(24));
+
+            Color prev = GUI.backgroundColor;
+            GUI.backgroundColor = GetColorForStickmanColor(queue[i]);
+            StickmanColor newColor = (StickmanColor)EditorGUILayout.EnumPopup(queue[i], GUILayout.Width(80));
+            GUI.backgroundColor = prev;
+
+            if (newColor != queue[i])
+            {
+                queue[i] = newColor;
+                workingHouses[houseIndex] = new HouseData(house.GridX, house.GridY, queue.ToArray());
+                isDirty = true;
+            }
+
+            GUI.enabled = i > 0;
+            if (GUILayout.Button("up", GUILayout.Width(28)))
+            {
+                StickmanColor tmp = queue[i];
+                queue[i] = queue[i - 1];
+                queue[i - 1] = tmp;
+                workingHouses[houseIndex] = new HouseData(house.GridX, house.GridY, queue.ToArray());
+                isDirty = true;
+            }
+            GUI.enabled = i < queue.Count - 1;
+            if (GUILayout.Button("dn", GUILayout.Width(28)))
+            {
+                StickmanColor tmp = queue[i];
+                queue[i] = queue[i + 1];
+                queue[i + 1] = tmp;
+                workingHouses[houseIndex] = new HouseData(house.GridX, house.GridY, queue.ToArray());
+                isDirty = true;
+            }
+            GUI.enabled = true;
+
+            if (GUILayout.Button("x", GUILayout.Width(20)))
+            {
+                queue.RemoveAt(i);
+                workingHouses[houseIndex] = new HouseData(house.GridX, house.GridY, queue.ToArray());
+                isDirty = true;
+                EditorGUILayout.EndHorizontal();
+                break;
+            }
+
+            EditorGUILayout.EndHorizontal();
+        }
+
+        EditorGUILayout.Space(2);
+
+        if (GUILayout.Button("Add Stickman to Queue"))
+        {
+            queue.Add(StickmanColor.Red);
+            workingHouses[houseIndex] = new HouseData(house.GridX, house.GridY, queue.ToArray());
             isDirty = true;
         }
     }
@@ -519,6 +684,17 @@ public class LevelEditorWindow : EditorWindow
             }
         }
 
+        workingHouses = new List<HouseData>();
+        if (currentAsset.Houses != null)
+        {
+            foreach (var house in currentAsset.Houses)
+            {
+                if (house != null)
+                    workingHouses.Add(new HouseData(house.GridX, house.GridY, house.StickmanQueue));
+            }
+        }
+
+        selectedHouseIndex = -1;
         validationResults.Clear();
         isDirty = false;
     }
@@ -564,6 +740,7 @@ public class LevelEditorWindow : EditorWindow
             selectedLevelIndex = -1;
             workingCells.Clear();
             workingBusSequence.Clear();
+            workingHouses.Clear();
             validationResults.Clear();
             isDirty = false;
         }
@@ -640,6 +817,21 @@ public class LevelEditorWindow : EditorWindow
             element.FindPropertyRelative("color").enumValueIndex = (int)workingBusSequence[i].Color;
         }
 
+        SerializedProperty housesProp = serialized.FindProperty("houses");
+        housesProp.arraySize = workingHouses.Count;
+        for (int i = 0; i < workingHouses.Count; i++)
+        {
+            SerializedProperty element = housesProp.GetArrayElementAtIndex(i);
+            element.FindPropertyRelative("gridX").intValue = workingHouses[i].GridX;
+            element.FindPropertyRelative("gridY").intValue = workingHouses[i].GridY;
+
+            StickmanColor[] queue = workingHouses[i].StickmanQueue ?? new StickmanColor[0];
+            SerializedProperty queueProp = element.FindPropertyRelative("stickmanQueue");
+            queueProp.arraySize = queue.Length;
+            for (int j = 0; j < queue.Length; j++)
+                queueProp.GetArrayElementAtIndex(j).enumValueIndex = (int)queue[j];
+        }
+
         serialized.ApplyModifiedPropertiesWithoutUndo();
     }
 
@@ -647,13 +839,26 @@ public class LevelEditorWindow : EditorWindow
 
     private void PaintCell(int x, int y)
     {
+        if (currentPaintMode == PaintMode.House)
+        {
+            PaintHouse(x, y);
+            return;
+        }
+
+        HouseData existingHouse = FindHouse(x, y);
+        if (existingHouse != null)
+        {
+            workingHouses.Remove(existingHouse);
+            isDirty = true;
+        }
+
         for (int i = 0; i < workingCells.Count; i++)
         {
             if (workingCells[i].gridX == x && workingCells[i].gridY == y)
             {
                 ColoredCell updated = workingCells[i];
-                updated.color = paintHidden ? workingCells[i].color : selectedPaintColor;
-                updated.isHidden = paintHidden;
+                updated.color = currentPaintMode == PaintMode.Hidden ? workingCells[i].color : selectedPaintColor;
+                updated.isHidden = currentPaintMode == PaintMode.Hidden;
                 workingCells[i] = updated;
                 isDirty = true;
                 return;
@@ -664,14 +869,42 @@ public class LevelEditorWindow : EditorWindow
         {
             gridX = x,
             gridY = y,
-            color = paintHidden ? StickmanColor.Red : selectedPaintColor,
-            isHidden = paintHidden
+            color = currentPaintMode == PaintMode.Hidden ? StickmanColor.Red : selectedPaintColor,
+            isHidden = currentPaintMode == PaintMode.Hidden
         });
+        isDirty = true;
+    }
+
+    private void PaintHouse(int x, int y)
+    {
+        HouseData existing = FindHouse(x, y);
+        if (existing != null)
+        {
+            int idx = workingHouses.IndexOf(existing);
+            selectedHouseIndex = idx;
+            return;
+        }
+
+        workingCells.RemoveAll(c => c.gridX == x && c.gridY == y);
+
+        HouseData newHouse = new HouseData(x, y, new StickmanColor[0]);
+        workingHouses.Add(newHouse);
+        selectedHouseIndex = workingHouses.Count - 1;
         isDirty = true;
     }
 
     private void EraseCell(int x, int y)
     {
+        HouseData existingHouse = FindHouse(x, y);
+        if (existingHouse != null)
+        {
+            if (selectedHouseIndex == workingHouses.IndexOf(existingHouse))
+                selectedHouseIndex = -1;
+            workingHouses.Remove(existingHouse);
+            isDirty = true;
+            return;
+        }
+
         for (int i = 0; i < workingCells.Count; i++)
         {
             if (workingCells[i].gridX == x && workingCells[i].gridY == y)
@@ -693,9 +926,20 @@ public class LevelEditorWindow : EditorWindow
         return null;
     }
 
+    private HouseData FindHouse(int x, int y)
+    {
+        foreach (var house in workingHouses)
+        {
+            if (house.GridX == x && house.GridY == y)
+                return house;
+        }
+        return null;
+    }
+
     private void ClampCellsToGrid()
     {
         workingCells.RemoveAll(c => c.gridX >= workingGridWidth || c.gridY >= workingGridHeight);
+        workingHouses.RemoveAll(h => h.GridX >= workingGridWidth || h.GridY >= workingGridHeight);
     }
 
     // Methods - validation
@@ -728,6 +972,21 @@ public class LevelEditorWindow : EditorWindow
             SerializedProperty element = busProp.GetArrayElementAtIndex(i);
             element.FindPropertyRelative("capacity").intValue = workingBusSequence[i].Capacity;
             element.FindPropertyRelative("color").enumValueIndex = (int)workingBusSequence[i].Color;
+        }
+
+        SerializedProperty housesProp = serialized.FindProperty("houses");
+        housesProp.arraySize = workingHouses.Count;
+        for (int i = 0; i < workingHouses.Count; i++)
+        {
+            SerializedProperty element = housesProp.GetArrayElementAtIndex(i);
+            element.FindPropertyRelative("gridX").intValue = workingHouses[i].GridX;
+            element.FindPropertyRelative("gridY").intValue = workingHouses[i].GridY;
+
+            StickmanColor[] queue = workingHouses[i].StickmanQueue ?? new StickmanColor[0];
+            SerializedProperty queueProp = element.FindPropertyRelative("stickmanQueue");
+            queueProp.arraySize = queue.Length;
+            for (int j = 0; j < queue.Length; j++)
+                queueProp.GetArrayElementAtIndex(j).enumValueIndex = (int)queue[j];
         }
 
         serialized.ApplyModifiedPropertiesWithoutUndo();

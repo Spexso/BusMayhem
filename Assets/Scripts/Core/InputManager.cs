@@ -66,13 +66,23 @@ public class InputManager : MonoBehaviour
         Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.green, 2f);
 
         StickmanController stickman = hit.collider.GetComponentInParent<StickmanController>();
-        if (stickman == null)
+        if (stickman != null)
         {
-            Debug.LogWarning("[InputManager] Hit object has no StickmanController.");
+            if (stickman.IsInteractionEnabled)
+                GridManager.Instance?.MoveStickman(stickman);
             return;
         }
 
-        if (stickman.IsInteractionEnabled)
-            GridManager.Instance?.MoveStickman(stickman);
+        HouseController house = hit.collider.GetComponentInParent<HouseController>();
+        if (house != null)
+        {
+            if (BusManager.Instance != null && BusManager.Instance.IsTransitioning)
+                return;
+
+            house.OnTapped();
+            return;
+        }
+
+        Debug.LogWarning("[InputManager] Hit object has no StickmanController or HouseController.");
     }
 }

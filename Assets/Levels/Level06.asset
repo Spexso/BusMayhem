@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridWidth: 7
   gridHeight: 7
-  timerDuration: 60
+  timerDuration: 80
   waitingAreaSize: 5
   cells:
   - gridX: 1
@@ -61,66 +61,66 @@ MonoBehaviour:
     gridY: 0
     color: 5
     isHidden: 0
+  - gridX: 3
+    gridY: 1
+    color: 7
+    isHidden: 0
+  - gridX: 4
+    gridY: 1
+    color: 7
+    isHidden: 0
+  - gridX: 4
+    gridY: 2
+    color: 7
+    isHidden: 0
+  - gridX: 4
+    gridY: 4
+    color: 8
+    isHidden: 0
+  - gridX: 4
+    gridY: 5
+    color: 8
+    isHidden: 0
+  - gridX: 2
+    gridY: 2
+    color: 8
+    isHidden: 0
+  - gridX: 1
+    gridY: 3
+    color: 8
+    isHidden: 0
+  - gridX: 1
+    gridY: 4
+    color: 0
+    isHidden: 0
+  - gridX: 2
+    gridY: 4
+    color: 0
+    isHidden: 0
+  - gridX: 2
+    gridY: 5
+    color: 0
+    isHidden: 0
+  - gridX: 1
+    gridY: 5
+    color: 0
+    isHidden: 0
+  - gridX: 3
+    gridY: 5
+    color: 0
+    isHidden: 0
+  - gridX: 5
+    gridY: 4
+    color: 0
+    isHidden: 0
+  - gridX: 5
+    gridY: 3
+    color: 0
+    isHidden: 0
+  houses:
   - gridX: 4
     gridY: 0
-    color: 6
-    isHidden: 0
-  - gridX: 3
-    gridY: 1
-    color: 7
-    isHidden: 0
-  - gridX: 4
-    gridY: 1
-    color: 7
-    isHidden: 0
-  - gridX: 4
-    gridY: 2
-    color: 7
-    isHidden: 0
-  - gridX: 4
-    gridY: 4
-    color: 8
-    isHidden: 0
-  - gridX: 4
-    gridY: 5
-    color: 8
-    isHidden: 0
-  - gridX: 2
-    gridY: 2
-    color: 8
-    isHidden: 0
-  - gridX: 1
-    gridY: 3
-    color: 8
-    isHidden: 0
-  - gridX: 1
-    gridY: 4
-    color: 0
-    isHidden: 0
-  - gridX: 2
-    gridY: 4
-    color: 0
-    isHidden: 0
-  - gridX: 2
-    gridY: 5
-    color: 0
-    isHidden: 0
-  - gridX: 1
-    gridY: 5
-    color: 0
-    isHidden: 0
-  - gridX: 3
-    gridY: 5
-    color: 0
-    isHidden: 0
-  - gridX: 5
-    gridY: 4
-    color: 0
-    isHidden: 0
-  - gridX: 5
-    gridY: 3
-    color: 0
-    isHidden: 0
+    stickmanQueue: 01000000
   busSequence:
   - capacity: 2
     color: 5
@@ -135,4 +135,4 @@ MonoBehaviour:
   - capacity: 4
     color: 8
   - capacity: 1
-    color: 6
+    color: 1

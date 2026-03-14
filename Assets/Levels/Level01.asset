@@ -69,10 +69,6 @@ MonoBehaviour:
     gridY: 2
     color: 0
     isHidden: 0
-  - gridX: 5
-    gridY: 2
-    color: 0
-    isHidden: 0
   - gridX: 4
     gridY: 2
     color: 1
@@ -84,10 +80,6 @@ MonoBehaviour:
   - gridX: 5
     gridY: 3
     color: 4
-    isHidden: 0
-  - gridX: 5
-    gridY: 4
-    color: 0
     isHidden: 0
   - gridX: 4
     gridY: 3
@@ -105,8 +97,16 @@ MonoBehaviour:
     gridY: 1
     color: 1
     isHidden: 1
+  - gridX: 5
+    gridY: 2
+    color: 0
+    isHidden: 1
+  houses:
+  - gridX: 5
+    gridY: 4
+    stickmanQueue: 010000000100000001000000
   busSequence:
-  - capacity: 5
+  - capacity: 8
     color: 1
   - capacity: 2
     color: 2

@@ -1,0 +1,273 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceeb16db27349e14ab8d6e3cd7108b91, type: 3}
+  m_Name: Level12
+  m_EditorClassIdentifier: 
+  gridWidth: 10
+  gridHeight: 10
+  timerDuration: 90
+  waitingAreaSize: 3
+  cells:
+  - gridX: 0
+    gridY: 0
+    color: 3
+    isHidden: 0
+  - gridX: 1
+    gridY: 1
+    color: 3
+    isHidden: 0
+  - gridX: 2
+    gridY: 2
+    color: 3
+    isHidden: 0
+  - gridX: 3
+    gridY: 3
+    color: 3
+    isHidden: 0
+  - gridX: 4
+    gridY: 4
+    color: 3
+    isHidden: 0
+  - gridX: 5
+    gridY: 5
+    color: 3
+    isHidden: 0
+  - gridX: 6
+    gridY: 6
+    color: 3
+    isHidden: 0
+  - gridX: 7
+    gridY: 7
+    color: 3
+    isHidden: 0
+  - gridX: 8
+    gridY: 8
+    color: 3
+    isHidden: 0
+  - gridX: 9
+    gridY: 9
+    color: 3
+    isHidden: 0
+  - gridX: 0
+    gridY: 9
+    color: 5
+    isHidden: 0
+  - gridX: 1
+    gridY: 8
+    color: 5
+    isHidden: 0
+  - gridX: 2
+    gridY: 7
+    color: 5
+    isHidden: 0
+  - gridX: 3
+    gridY: 6
+    color: 5
+    isHidden: 0
+  - gridX: 4
+    gridY: 5
+    color: 5
+    isHidden: 0
+  - gridX: 5
+    gridY: 4
+    color: 5
+    isHidden: 0
+  - gridX: 6
+    gridY: 3
+    color: 5
+    isHidden: 0
+  - gridX: 7
+    gridY: 2
+    color: 5
+    isHidden: 0
+  - gridX: 8
+    gridY: 1
+    color: 5
+    isHidden: 0
+  - gridX: 9
+    gridY: 0
+    color: 5
+    isHidden: 0
+  - gridX: 4
+    gridY: 3
+    color: 0
+    isHidden: 0
+  - gridX: 5
+    gridY: 3
+    color: 0
+    isHidden: 0
+  - gridX: 5
+    gridY: 2
+    color: 0
+    isHidden: 0
+  - gridX: 4
+    gridY: 2
+    color: 0
+    isHidden: 0
+  - gridX: 4
+    gridY: 1
+    color: 0
+    isHidden: 0
+  - gridX: 5
+    gridY: 1
+    color: 0
+    isHidden: 0
+  - gridX: 5
+    gridY: 0
+    color: 0
+    isHidden: 0
+  - gridX: 4
+    gridY: 0
+    color: 0
+    isHidden: 0
+  - gridX: 1
+    gridY: 0
+    color: 0
+    isHidden: 0
+  - gridX: 2
+    gridY: 0
+    color: 0
+    isHidden: 0
+  - gridX: 3
+    gridY: 0
+    color: 0
+    isHidden: 0
+  - gridX: 8
+    gridY: 0
+    color: 0
+    isHidden: 0
+  - gridX: 7
+    gridY: 0
+    color: 0
+    isHidden: 0
+  - gridX: 6
+    gridY: 0
+    color: 0
+    isHidden: 0
+  - gridX: 0
+    gridY: 5
+    color: 0
+    isHidden: 0
+  - gridX: 0
+    gridY: 6
+    color: 0
+    isHidden: 0
+  - gridX: 0
+    gridY: 7
+    color: 0
+    isHidden: 0
+  - gridX: 0
+    gridY: 8
+    color: 0
+    isHidden: 0
+  - gridX: 1
+    gridY: 7
+    color: 0
+    isHidden: 0
+  - gridX: 1
+    gridY: 6
+    color: 0
+    isHidden: 0
+  - gridX: 1
+    gridY: 5
+    color: 0
+    isHidden: 0
+  - gridX: 2
+    gridY: 5
+    color: 0
+    isHidden: 0
+  - gridX: 2
+    gridY: 6
+    color: 0
+    isHidden: 0
+  - gridX: 3
+    gridY: 5
+    color: 0
+    isHidden: 0
+  - gridX: 6
+    gridY: 5
+    color: 0
+    isHidden: 0
+  - gridX: 7
+    gridY: 5
+    color: 0
+    isHidden: 0
+  - gridX: 7
+    gridY: 6
+    color: 0
+    isHidden: 0
+  - gridX: 8
+    gridY: 5
+    color: 0
+    isHidden: 0
+  - gridX: 8
+    gridY: 6
+    color: 0
+    isHidden: 0
+  - gridX: 9
+    gridY: 5
+    color: 0
+    isHidden: 0
+  - gridX: 9
+    gridY: 6
+    color: 0
+    isHidden: 0
+  - gridX: 9
+    gridY: 7
+    color: 0
+    isHidden: 0
+  - gridX: 9
+    gridY: 8
+    color: 0
+    isHidden: 0
+  - gridX: 8
+    gridY: 7
+    color: 0
+    isHidden: 0
+  - gridX: 7
+    gridY: 1
+    color: 0
+    isHidden: 0
+  - gridX: 2
+    gridY: 1
+    color: 0
+    isHidden: 0
+  - gridX: 6
+    gridY: 2
+    color: 0
+    isHidden: 0
+  - gridX: 3
+    gridY: 2
+    color: 0
+    isHidden: 0
+  houses: []
+  busSequence:
+  - capacity: 2
+    color: 3
+  - capacity: 2
+    color: 5
+  - capacity: 2
+    color: 3
+  - capacity: 2
+    color: 5
+  - capacity: 2
+    color: 3
+  - capacity: 2
+    color: 5
+  - capacity: 2
+    color: 3
+  - capacity: 2
+    color: 5
+  - capacity: 2
+    color: 3
+  - capacity: 2
+    color: 5
