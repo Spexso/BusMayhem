@@ -8,4 +8,5 @@ public struct ColoredCell
     public int gridX;
     public int gridY;
     public StickmanColor color;
+    public bool isHidden;
 }

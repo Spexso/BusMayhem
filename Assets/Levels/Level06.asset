@@ -20,81 +20,107 @@ MonoBehaviour:
   - gridX: 1
     gridY: 1
     color: 1
+    isHidden: 0
   - gridX: 3
     gridY: 3
     color: 1
+    isHidden: 0
   - gridX: 5
     gridY: 5
     color: 1
+    isHidden: 0
   - gridX: 2
     gridY: 1
     color: 2
+    isHidden: 0
   - gridX: 3
     gridY: 2
     color: 2
+    isHidden: 0
   - gridX: 4
     gridY: 3
     color: 2
+    isHidden: 0
   - gridX: 1
     gridY: 2
     color: 4
+    isHidden: 0
   - gridX: 2
     gridY: 3
     color: 4
+    isHidden: 0
   - gridX: 3
     gridY: 4
     color: 4
+    isHidden: 0
   - gridX: 2
     gridY: 0
     color: 5
+    isHidden: 0
   - gridX: 3
     gridY: 0
     color: 5
+    isHidden: 0
   - gridX: 4
     gridY: 0
     color: 6
+    isHidden: 0
   - gridX: 3
     gridY: 1
     color: 7
+    isHidden: 0
   - gridX: 4
     gridY: 1
     color: 7
+    isHidden: 0
   - gridX: 4
     gridY: 2
     color: 7
+    isHidden: 0
   - gridX: 4
     gridY: 4
     color: 8
+    isHidden: 0
   - gridX: 4
     gridY: 5
     color: 8
+    isHidden: 0
   - gridX: 2
     gridY: 2
     color: 8
+    isHidden: 0
   - gridX: 1
     gridY: 3
     color: 8
+    isHidden: 0
   - gridX: 1
     gridY: 4
     color: 0
+    isHidden: 0
   - gridX: 2
     gridY: 4
     color: 0
+    isHidden: 0
   - gridX: 2
     gridY: 5
     color: 0
+    isHidden: 0
   - gridX: 1
     gridY: 5
     color: 0
+    isHidden: 0
   - gridX: 3
     gridY: 5
     color: 0
+    isHidden: 0
   - gridX: 5
     gridY: 4
     color: 0
+    isHidden: 0
   - gridX: 5
     gridY: 3
     color: 0
+    isHidden: 0
   busSequence:
   - capacity: 2
     color: 5

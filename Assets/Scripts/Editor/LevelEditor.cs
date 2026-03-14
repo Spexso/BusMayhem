@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -43,6 +44,7 @@ public class LevelEditorWindow : EditorWindow
     // Fields - painting
 
     private StickmanColor selectedPaintColor = StickmanColor.Red;
+    private bool paintHidden = false;
     private bool isDirty = false;
 
     // Fields - validation
@@ -207,7 +209,7 @@ public class LevelEditorWindow : EditorWindow
 
         foreach (StickmanColor color in System.Enum.GetValues(typeof(StickmanColor)))
         {
-            bool isSelected = color == selectedPaintColor;
+            bool isSelected = !paintHidden && color == selectedPaintColor;
             GUIStyle style = new GUIStyle(GUI.skin.button);
 
             if (isSelected)
@@ -219,10 +221,25 @@ public class LevelEditorWindow : EditorWindow
             string label = color == StickmanColor.None ? "Path" : color.ToString();
 
             if (GUILayout.Button(label, style, GUILayout.Width(PaletteButtonSize * 2f), GUILayout.Height(PaletteButtonSize)))
+            {
                 selectedPaintColor = color;
+                paintHidden = false;
+            }
 
             GUI.backgroundColor = prev;
         }
+
+        GUIStyle hiddenStyle = new GUIStyle(GUI.skin.button);
+        if (paintHidden)
+            hiddenStyle.normal.background = MakeTex(2, 2, new Color(1f, 1f, 1f, 0.4f));
+
+        Color prevHidden = GUI.backgroundColor;
+        GUI.backgroundColor = Color.black;
+
+        if (GUILayout.Button("Hidden", hiddenStyle, GUILayout.Width(PaletteButtonSize * 2f), GUILayout.Height(PaletteButtonSize)))
+            paintHidden = true;
+
+        GUI.backgroundColor = prevHidden;
 
         EditorGUILayout.EndHorizontal();
     }
@@ -231,7 +248,6 @@ public class LevelEditorWindow : EditorWindow
     {
         float totalWidth = workingGridWidth * CellDrawSize;
         float totalHeight = workingGridHeight * CellDrawSize;
-
         Rect canvasRect = GUILayoutUtility.GetRect(totalWidth, totalHeight);
 
         for (int y = 0; y < workingGridHeight; y++)
@@ -247,8 +263,15 @@ public class LevelEditorWindow : EditorWindow
                 ColoredCell? existingCell = FindCell(x, y);
 
                 Color cellColor;
+                bool showHiddenLabel = false;
+
                 if (!existingCell.HasValue)
                     cellColor = new Color(0.15f, 0.15f, 0.15f);
+                else if (existingCell.Value.isHidden)
+                {
+                    cellColor = Color.black;
+                    showHiddenLabel = true;
+                }
                 else if (existingCell.Value.color == StickmanColor.None)
                     cellColor = new Color(0.45f, 0.45f, 0.45f);
                 else
@@ -257,6 +280,9 @@ public class LevelEditorWindow : EditorWindow
                 EditorGUI.DrawRect(cellRect, cellColor);
                 EditorGUI.DrawRect(new Rect(cellRect.x, cellRect.y, cellRect.width, 1f), Color.black);
                 EditorGUI.DrawRect(new Rect(cellRect.x, cellRect.y, 1f, cellRect.height), Color.black);
+
+                if (showHiddenLabel)
+                    GUI.Label(cellRect, "H", new GUIStyle(EditorStyles.boldLabel) { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } });
 
                 if (Event.current.type == EventType.MouseDown && cellRect.Contains(Event.current.mousePosition))
                 {
@@ -271,7 +297,6 @@ public class LevelEditorWindow : EditorWindow
             }
         }
     }
-
     // Methods - right panel sections
 
     private void DrawGridSizeFields()
@@ -603,6 +628,7 @@ public class LevelEditorWindow : EditorWindow
             element.FindPropertyRelative("gridX").intValue = workingCells[i].gridX;
             element.FindPropertyRelative("gridY").intValue = workingCells[i].gridY;
             element.FindPropertyRelative("color").enumValueIndex = (int)workingCells[i].color;
+            element.FindPropertyRelative("isHidden").boolValue = workingCells[i].isHidden;
         }
 
         SerializedProperty busProp = serialized.FindProperty("busSequence");
@@ -626,14 +652,21 @@ public class LevelEditorWindow : EditorWindow
             if (workingCells[i].gridX == x && workingCells[i].gridY == y)
             {
                 ColoredCell updated = workingCells[i];
-                updated.color = selectedPaintColor;
+                updated.color = paintHidden ? workingCells[i].color : selectedPaintColor;
+                updated.isHidden = paintHidden;
                 workingCells[i] = updated;
                 isDirty = true;
                 return;
             }
         }
 
-        workingCells.Add(new ColoredCell { gridX = x, gridY = y, color = selectedPaintColor });
+        workingCells.Add(new ColoredCell
+        {
+            gridX = x,
+            gridY = y,
+            color = paintHidden ? StickmanColor.Red : selectedPaintColor,
+            isHidden = paintHidden
+        });
         isDirty = true;
     }
 
@@ -685,6 +718,7 @@ public class LevelEditorWindow : EditorWindow
             element.FindPropertyRelative("gridX").intValue = workingCells[i].gridX;
             element.FindPropertyRelative("gridY").intValue = workingCells[i].gridY;
             element.FindPropertyRelative("color").enumValueIndex = (int)workingCells[i].color;
+            element.FindPropertyRelative("isHidden").boolValue = workingCells[i].isHidden;
         }
 
         SerializedProperty busProp = serialized.FindProperty("busSequence");

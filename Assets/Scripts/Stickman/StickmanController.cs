@@ -12,8 +12,10 @@ public class StickmanController : MonoBehaviour
     [SerializeField] private float arrivalThreshold = 0.01f;
     [SerializeField] private Renderer meshRenderer;
     [SerializeField] private GameObject outlineMesh;
-    [SerializeField] private SpriteRenderer blockedIcon;
     [SerializeField] private AudioSource blockedAudioSource;
+    [SerializeField] private SpriteRenderer blockedIcon;
+    [SerializeField] private SpriteRenderer hiddenIcon;
+
 
     private int gridX;
     private int gridY;
@@ -21,6 +23,7 @@ public class StickmanController : MonoBehaviour
     private bool isMoving;
     private bool IsInteractable = true;
     private Animator animator;
+    private bool isHidden;
 
     private float iconScaleUpDuration = 0.15f;
     private float iconHoldDuration = 0.5f;
@@ -31,6 +34,7 @@ public class StickmanController : MonoBehaviour
     public StickmanColor CColor => stickmanColor;
     public bool IsMoving => isMoving;
     public bool IsInteractionEnabled => IsInteractable;
+    public bool IsHidden => isHidden;
 
     // Methods
     private void Awake()
@@ -40,11 +44,14 @@ public class StickmanController : MonoBehaviour
             Debug.LogError($"[StickmanController] Animator not found on {gameObject.name} or its children.");
     }
 
-    public void Initialize(int x, int y, StickmanColor color)
+    public void Initialize(int x, int y, StickmanColor color, bool hidden = false)
     {
         gridX = x;
         gridY = y;
         stickmanColor = color;
+        isHidden = hidden;
+
+        SetHiddenIcon(isHidden);
 
         if (meshRenderer == null)
         {
@@ -53,13 +60,22 @@ public class StickmanController : MonoBehaviour
         }
 
         meshRenderer.material = new Material(meshRenderer.material);
-        meshRenderer.material.color = ColorConverter.GetColor(color);
+        meshRenderer.material.color = isHidden ? Color.black : ColorConverter.GetColor(color);
+
+        if (outlineMesh != null)
+            outlineMesh.SetActive(!isHidden);
     }
 
     public void SetColor(StickmanColor color)
     {
         meshRenderer.material = new Material(meshRenderer.material);
         meshRenderer.material.color = ColorConverter.GetColor(color);
+    }
+
+    public void SetHiddenIcon(bool isOn)
+    {
+        if (hiddenIcon)
+            hiddenIcon.gameObject.SetActive(isOn);
     }
 
     public void DisableInteraction()

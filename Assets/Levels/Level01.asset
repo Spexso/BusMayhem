@@ -20,65 +20,93 @@ MonoBehaviour:
   - gridX: 4
     gridY: 0
     color: 4
+    isHidden: 0
   - gridX: 3
     gridY: 0
     color: 2
+    isHidden: 0
   - gridX: 5
     gridY: 0
     color: 1
+    isHidden: 0
   - gridX: 6
     gridY: 0
     color: 6
+    isHidden: 0
   - gridX: 5
     gridY: 1
     color: 6
+    isHidden: 0
   - gridX: 3
     gridY: 2
     color: 6
+    isHidden: 0
   - gridX: 3
     gridY: 3
     color: 0
+    isHidden: 0
   - gridX: 3
     gridY: 4
     color: 0
+    isHidden: 0
   - gridX: 4
     gridY: 5
     color: 5
+    isHidden: 0
   - gridX: 5
     gridY: 5
     color: 0
+    isHidden: 0
   - gridX: 6
     gridY: 4
     color: 2
+    isHidden: 0
   - gridX: 6
     gridY: 3
     color: 6
+    isHidden: 0
   - gridX: 6
     gridY: 2
     color: 0
+    isHidden: 0
   - gridX: 5
     gridY: 2
     color: 0
+    isHidden: 0
   - gridX: 4
     gridY: 2
     color: 1
+    isHidden: 0
   - gridX: 4
     gridY: 4
     color: 0
+    isHidden: 0
   - gridX: 5
     gridY: 3
     color: 4
+    isHidden: 0
   - gridX: 5
     gridY: 4
     color: 0
+    isHidden: 0
   - gridX: 4
     gridY: 3
     color: 5
+    isHidden: 0
+  - gridX: 3
+    gridY: 1
+    color: 1
+    isHidden: 1
+  - gridX: 6
+    gridY: 1
+    color: 1
+    isHidden: 1
   - gridX: 4
     gridY: 1
-    color: 0
+    color: 1
+    isHidden: 1
   busSequence:
-  - capacity: 2
+  - capacity: 5
     color: 1
   - capacity: 2
     color: 2

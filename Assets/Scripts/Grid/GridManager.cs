@@ -124,7 +124,21 @@ public class GridManager : MonoBehaviour
             }
 
             List<Vector2Int> path = PathFinder.BFS(cells, stickman.GridX, stickman.GridY);
-            if (path != null)
+            bool hasPath = path != null;
+
+            if (stickman.IsHidden)
+            {
+                if (hasPath)
+                    stickman.Initialize(stickman.GridX, stickman.GridY, stickman.CColor, false);
+
+                continue;
+            }
+            else
+            {
+                stickman.SetHiddenIcon(false);
+            }
+
+            if (hasPath)
                 stickman.SetHighlighted();
             else
                 stickman.SetDimmed();
@@ -164,7 +178,7 @@ public class GridManager : MonoBehaviour
                 return;
             }
 
-            stickman.Initialize(coloredCell.gridX, coloredCell.gridY, coloredCell.color);
+            stickman.Initialize(coloredCell.gridX, coloredCell.gridY, coloredCell.color, coloredCell.isHidden);
             cell.SetOccupant(stickman);
             stickmans.Add(stickman);
         }
