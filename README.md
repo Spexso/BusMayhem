@@ -181,16 +181,3 @@ Players earn **10 coins** per level win, displayed with a flying-coin UI animati
 4. To build for Android, switch platform in **Build Settings** and build normally
 
 To create or edit levels, open **Tools → Level Editor** from the Unity menu bar.
-
----
-
-## Git History Highlights
-
-| Commit | Change |
-|--------|--------|
-| `Last Fixes` | Final polish pass |
-| `Hidden Passenger feature` | New late-game mechanic |
-| `Class comments` | Code documentation |
-| `Thirdparty assets moved` | Asset organization cleanup |
-| `UI, Sounds, many updates` | Audio and UI iteration |
-| `Level Editor Tool` | Designer tooling added |
