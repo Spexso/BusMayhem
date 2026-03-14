@@ -25,7 +25,7 @@ Players tap stickman characters on a grid and route them to color-matching buses
 
 **Hidden Passengers** — A late-game mechanic where stickmen spawn disguised (shown in black). Their true color is revealed only when a clear path opens around them, adding a layer of uncertainty to planning.
 
-> In-game screenshots are available in the `pictures/` directory at the repository root.
+> In-game screenshots are available in the `media/` directory at the repository root.
 
 ---
 
@@ -180,4 +180,4 @@ Players earn **10 coins** per level win, displayed with a flying-coin UI animati
 3. Open `Assets/Scenes/StartScene` and press Play
 4. To build for Android, switch platform in **Build Settings** and build normally
 
-To create or edit levels, open **Tools → Level Editor** from the Unity menu bar.
+To create or edit levels, open **BusMayhem → Level Editor** from the Unity menu bar.
