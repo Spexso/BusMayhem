@@ -2,6 +2,9 @@ using UnityEngine;
 using System.Collections;
 using System;
 
+/// <summary>
+/// Provides functionality to display or hide a UI panel with a smooth scaling animation over a configurable duration.
+/// </summary>
 public class UIScalePanel : MonoBehaviour
 {
     // Fields

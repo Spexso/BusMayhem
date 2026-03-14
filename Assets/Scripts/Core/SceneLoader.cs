@@ -1,5 +1,9 @@
 using UnityEngine.SceneManagement;
 
+
+/// <summary>
+/// Provides static methods for loading predefined scenes within the game, including the start, gameplay, and end
+/// scenes.
 public static class SceneLoader
 {
     private const string StartScene = "StartScene";

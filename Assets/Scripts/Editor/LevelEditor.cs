@@ -3,6 +3,11 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Provides a custom Unity Editor window for creating, editing, and managing levels. Enables
+/// users to configure grid layouts, paint cells, set bus sequences, and validate level data through an interactive
+/// graphical interface.
+/// </summary>
 public class LevelEditorWindow : EditorWindow
 {
     // Fields - window layout

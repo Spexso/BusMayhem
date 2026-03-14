@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Manages the creation, organization, and interaction of grid cells and stickman entities within the game scene.
+/// Provides methods to initialize the grid, move stickmen, and update their visual highlights.
+/// </summary>
 public class GridManager : MonoBehaviour
 {
     // Fields 
@@ -180,6 +184,7 @@ public class GridManager : MonoBehaviour
 
         HashSet<Vector2> spawnedMidpoints = new HashSet<Vector2>();
 
+        // Directions: right, down, left, up, and diagonals
         int[] dirX = { 1, 0, -1, 0, 1, -1, -1, 1 };
         int[] dirY = { 0, 1, 0, -1, 1, 1, -1, -1 };
 
@@ -222,6 +227,6 @@ public class GridManager : MonoBehaviour
     private void OnStickmanReachedExit(StickmanController stickman)
     {
         // Leave decision to PassengerRouter
-        PassengerRouter.Instance.RoutePassenger(stickman);
+        PassengerRouter.Instance?.RoutePassenger(stickman);
     }
 }

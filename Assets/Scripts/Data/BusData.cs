@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Represents the data associated with a bus, its color and seating capacity.
+/// </summary>
 [System.Serializable]
 public class BusData
 {

@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Provides a suite of automated tests for verifying the correctness of the PathFinder pathfinding logic in various
+/// grid scenarios.
+/// </summary>
 public class PathFinderTests
 {
     [MenuItem("BusMayhem/Tests/Run PathFinder Tests")]

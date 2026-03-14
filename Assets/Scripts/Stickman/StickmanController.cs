@@ -1,6 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Controls the behavior and interactions of a stickman character, including movement, color management, and
+/// interaction states within the game environment.
+/// </summary>
 public class StickmanController : MonoBehaviour
 {
     // Fields
@@ -163,13 +167,14 @@ public class StickmanController : MonoBehaviour
             animator.SetBool("IsWalking", false);
 
         isMoving = false;
-        GameManager.Instance.OnStickmanWalkEnded();
+        GameManager.Instance?.OnStickmanWalkEnded();
         onComplete?.Invoke();
     }
     public void StopMovement()
     {
         StopAllCoroutines();
         isMoving = false;
+
         if (animator != null)
             animator.SetBool("IsWalking", false);
     }

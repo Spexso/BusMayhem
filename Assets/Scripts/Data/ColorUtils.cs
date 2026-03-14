@@ -1,6 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+/// <summary>
+/// Represents a color palette for mapping StickmanColor values to Unity Color values.
+/// </summary>
 [CreateAssetMenu(fileName = "ColorPalette", menuName = "BusMayhem/ColorPalette")]
 public class ColorMatchPalette : ScriptableObject
 {

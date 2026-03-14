@@ -73,6 +73,6 @@ public class InputManager : MonoBehaviour
         }
 
         if (stickman.IsInteractionEnabled)
-            GridManager.Instance.MoveStickman(stickman);
+            GridManager.Instance?.MoveStickman(stickman);
     }
 }

@@ -32,7 +32,6 @@ Transform:
   m_Children:
   - {fileID: 3610821589306164015}
   - {fileID: 7014099755093185477}
-  - {fileID: 8390165745080591758}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2126907678545627374
@@ -49,10 +48,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   busRenderer: {fileID: 7812025273154874507}
   PassengerEntryPoint: {fileID: 8983238482417783500}
-  rowARoot: {fileID: 7014099755093185477}
-  rowBRoot: {fileID: 8390165745080591758}
   seatPrefab: {fileID: 4960325210141406296, guid: abcc86f18f951f74b98482769da56de2, type: 3}
   stickmanPrefab: {fileID: 2829477119029406347, guid: a68d4f2d4f2bdf74eb8cae8b83ddc9bc, type: 3}
+  rowOrigin: {fileID: 7014099755093185477}
+  rowSpacing: 0.7
   seatSpacing: 1.2
 --- !u!1 &2632651160239885073
 GameObject:
@@ -172,7 +171,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7014099755093185477}
   m_Layer: 0
-  m_Name: SeatsRowA
+  m_Name: SeatsRowOrigin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -187,7 +186,7 @@ Transform:
   m_GameObject: {fileID: 7406301142662521300}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -1.227, y: 2.24, z: 0.5}
+  m_LocalPosition: {x: -1.227, y: 2.24, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5023,37 +5022,6 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!1 &8389935743014798938
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8390165745080591758}
-  m_Layer: 0
-  m_Name: SeatsRowB
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8390165745080591758
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8389935743014798938}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -1.2270026, y: 2.24, z: -0.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1460035351566081638}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &8983238482417783500
 GameObject:
   m_ObjectHideFlags: 0

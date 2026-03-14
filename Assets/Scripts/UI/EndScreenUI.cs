@@ -2,6 +2,10 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+/// <summary>
+/// Manages the end screen user interface for the game, displaying the outcome of the level and providing options for
+/// the player to proceed to the next level or retry.
+/// </summary>
 public class EndScreenUI : MonoBehaviour
 {
     // Fields

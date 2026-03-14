@@ -1,8 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Manages the waiting area for stickman passengers, including their placement, tracking, and boarding process within
+/// the game environment.
+/// </summary>
 public class WaitingAreaManager : MonoBehaviour
 {
     // Fields
@@ -34,7 +37,7 @@ public class WaitingAreaManager : MonoBehaviour
 
     public void Initialize(LevelData data)
     {
-        // Temp
+        // Temp, debug purposes
         HideDebugPlane();
 
         slotCount = data.WaitingAreaSize;

@@ -7,10 +7,10 @@ public class BusController : MonoBehaviour
     // Fields
     [SerializeField] private Renderer busRenderer;
     [SerializeField] public GameObject PassengerEntryPoint;
-    [SerializeField] private Transform rowARoot;
-    [SerializeField] private Transform rowBRoot;
     [SerializeField] private GameObject seatPrefab;
     [SerializeField] private GameObject stickmanPrefab;
+    [SerializeField] private Transform rowOrigin;
+    [SerializeField] private float rowSpacing = 0.7f;
     [SerializeField] private float seatSpacing = 0.6f;
 
     private StickmanColor color;
@@ -63,18 +63,24 @@ public class BusController : MonoBehaviour
 
     private void SpawnSeats()
     {
-        int rowACount = Mathf.Min(Mathf.CeilToInt(capacity / 2f), 2);
-        int rowBCount = Mathf.Min(Mathf.FloorToInt(capacity / 2f), 2);
+        seatSlots.Clear();
 
-        SpawnRow(rowARoot, rowACount);
-        SpawnRow(rowBRoot, rowBCount);
+        int rowCount = Mathf.CeilToInt(capacity / 2f);
+
+        for (int i = 0; i < rowCount; i++)
+        {
+            bool isLastRow = i == rowCount - 1;
+            bool isOddCapacity = capacity % 2 != 0;
+            int seatsInRow = (isLastRow && isOddCapacity) ? 1 : 2;
+            SpawnRow(i, seatsInRow);
+        }
     }
 
-    private void SpawnRow(Transform root, int count)
+    private void SpawnRow(int rowIndex, int count)
     {
-        if (root == null)
+        if (rowOrigin == null)
         {
-            Debug.LogError("[BusController] Row root transform is not assigned.");
+            Debug.LogError("[BusController] rowOrigin is not assigned.");
             return;
         }
 
@@ -83,9 +89,7 @@ public class BusController : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            Vector3 localPos = new Vector3(0f, 0f, startX + i * seatSpacing);
-            GameObject seat = Instantiate(seatPrefab, root);
-            seat.transform.localPosition = localPos;
+            GameObject seat = Instantiate(seatPrefab, rowOrigin.position + rowOrigin.forward * rowIndex * rowSpacing + rowOrigin.right * (startX + i * seatSpacing), rowOrigin.rotation, rowOrigin);
             seatSlots.Add(seat.transform);
         }
     }

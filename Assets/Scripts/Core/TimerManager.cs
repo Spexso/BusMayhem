@@ -1,7 +1,11 @@
 using System;
 using UnityEngine;
 
-
+/// <summary>
+/// Provides centralized management of a countdown timer, including starting, stopping, and tracking the remaining time.
+/// Exposes events for timer updates and expiration, and offers a singleton instance for global access within the
+/// application.
+/// </summary>
 public class TimerManager : MonoBehaviour
 {
     // Fields

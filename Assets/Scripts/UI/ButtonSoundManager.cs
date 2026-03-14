@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Provides a singleton manager for playing button click sounds.
+/// </summary>
 public class ButtonSoundManager : MonoBehaviour
 {
     // Fields

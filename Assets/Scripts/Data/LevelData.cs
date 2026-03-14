@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Represents the configuration data for a game level, including grid dimensions, timer settings, and bus and passenger.
+/// arrangements.
+/// </summary>
 [CreateAssetMenu(fileName = "LevelData", menuName = "BusMayhem/LevelData")]
 public class LevelData : ScriptableObject
 {

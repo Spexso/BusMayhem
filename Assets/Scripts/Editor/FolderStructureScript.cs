@@ -1,6 +1,10 @@
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Provides functionality to create a standardized folder hierarchy within a Unity project to organize scripts,
+/// prefabs, scenes, and related assets.
+/// </summary>
 public class CreateFolderStructure
 {
     [MenuItem("Tools/Setup Folder Structure")]

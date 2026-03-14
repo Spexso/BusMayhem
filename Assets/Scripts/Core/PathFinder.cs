@@ -1,7 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// This class handles BFS algorithm for pathfinding. It is used by GridManager to find the shortest path to the exit for Stickmans.
+/// <summary>
+/// Provides static methods for performing pathfinding operations using the Breadth-First Search (BFS) algorithm within
+/// a grid-based environment.
+/// </summary>
+/// <remarks>The PathFinder class is primarily used by the GridManager to determine the shortest path for
+/// entities, such as Stickmans, to reach an exit within a grid. It also includes functionality to verify level
+/// solvability in level editor scenarios. All methods are static and thread-safe, making the class suitable for use in
+/// both runtime and editor contexts.</remarks>
 public class PathFinder
 {
     private static readonly Vector2Int[] directions = new Vector2Int[]

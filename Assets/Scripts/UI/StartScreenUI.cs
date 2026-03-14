@@ -2,12 +2,17 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+/// <summary>
+/// Manages the start screen user interface, including displaying the logo, handling user input, and transitioning to
+/// the gameplay scene.
+/// </summary>
 public class StartScreenUI : MonoBehaviour
 {
     // Fields
     [SerializeField] private RawImage logoImage;
     [SerializeField] private GameObject clickButton;
     [SerializeField] private AudioSource menuMusic;
+
     private BusMayhemInputActions actions;
     private bool inputReceived;
 
@@ -31,6 +36,7 @@ public class StartScreenUI : MonoBehaviour
             EnableInput();
             logoImage.gameObject.SetActive(true);
             clickButton.gameObject.SetActive(true);
+
             return;
         }
 
@@ -41,6 +47,7 @@ public class StartScreenUI : MonoBehaviour
             logoImage.gameObject.SetActive(true);
             clickButton.gameObject.SetActive(true);
             EnableInput();
+
             return;
         }
 

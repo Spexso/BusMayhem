@@ -21,7 +21,6 @@ public class ValidationResult
 public static class LevelDataValidator
 {
     // Methods
-
     public static List<ValidationResult> Validate(LevelData levelData)
     {
         var results = new List<ValidationResult>();
@@ -53,8 +52,6 @@ public static class LevelDataValidator
         }
         return false;
     }
-
-    // Methods - private validators
 
     private static void ValidateGridSize(LevelData levelData, List<ValidationResult> results)
     {

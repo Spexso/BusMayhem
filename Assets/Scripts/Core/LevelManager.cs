@@ -9,7 +9,7 @@ public class LevelManager : MonoBehaviour
     private int currentLevelIndex;
 
     private const string LevelIndexKey = "CurrentLevelIndex";
-    private const string LastGameResultKey = "LastGameResult";
+    private const string LastGameResultKey = "LastGameResult"; // UI Purposes
 
     public static LevelManager Instance { get; private set; }
 

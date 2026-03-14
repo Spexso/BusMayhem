@@ -123,7 +123,7 @@ public class BusManager : MonoBehaviour
         bus.transform.position = busStopTransform.position;
         isTransitioning = false;
 
-        // After bus arrives try to 
+        // After bus arrives try to board waiting passengers of the same color
         WaitingAreaManager.Instance.TryBoardWaitingPassengers();
     }
 

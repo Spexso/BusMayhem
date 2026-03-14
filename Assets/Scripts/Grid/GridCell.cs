@@ -1,5 +1,9 @@
 using UnityEngine;
 
+
+/// <summary>
+/// Represents a single cell within a grid that can be occupied by a StickmanController.
+/// </summary>
 public class GridCell : MonoBehaviour
 {
     // Fields

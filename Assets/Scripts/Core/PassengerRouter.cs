@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Provides functionality for routing stickman passengers to the appropriate waiting area or directly onto the bus
+/// based on the current bus state and passenger color.
+/// </summary>
 public class PassengerRouter : MonoBehaviour
 {
     // Fields

@@ -1,8 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Manages the user interface elements during gameplay, including level display and timer updates.
+/// </summary>
 public class GameplayScreenUI : MonoBehaviour
 {
     // Fields
