@@ -6,6 +6,7 @@ public class GridManager : MonoBehaviour
     // Fields 
     [SerializeField] private GameObject cellPrefab;
     [SerializeField] private GameObject stickmanPrefab;
+    [SerializeField] private GameObject borderTilePrefab;
     [SerializeField] private float cellSize = 1f;
 
     private int gridWidth;
@@ -35,7 +36,13 @@ public class GridManager : MonoBehaviour
         gridHeight = data.GridHeight;
         cells = new GridCell[gridWidth, gridHeight];
 
-        SpawnCells(data);
+        int minX = int.MaxValue;
+        int maxX = int.MinValue;
+        CalculateXMinMaxDimensions(ref minX, ref maxX, data);
+        float offsetX = (minX + maxX) * cellSize * 0.5f;
+
+        SpawnCells(data, offsetX);
+        SpawnBorderTiles(data, offsetX);
         RefreshHighlights();
     }
 
@@ -63,11 +70,11 @@ public class GridManager : MonoBehaviour
         List<Vector3> worldPath = new List<Vector3>();
 
         foreach (Vector2Int gridPos in gridPath)
-            worldPath.Add(cells[gridPos.x, gridPos.y].transform.position + Vector3.up * 0.5f);
+            worldPath.Add(cells[gridPos.x, gridPos.y].transform.position);
 
         int exitX = gridPath.Count > 0 ? gridPath[gridPath.Count - 1].x : stickman.GridX;
         Vector3 exitCellPos = cells[exitX, 0].transform.position;
-        Vector3 exitPos = exitCellPos + Vector3.forward * cellSize + Vector3.up * 0.5f;
+        Vector3 exitPos = exitCellPos + Vector3.forward * cellSize;
         worldPath.Add(exitPos);
 
         return worldPath.ToArray();
@@ -86,8 +93,12 @@ public class GridManager : MonoBehaviour
 
         List<Vector2Int> gridPath = PathFinder.BFS(cells, stickman.GridX, stickman.GridY);
 
+        // Stickman unable to move
         if (gridPath == null)
+        {
+            stickman.PlayBlockedFeedback();
             return;
+        }
 
         cells[stickman.GridX, stickman.GridY].ClearOccupant();
         stickmans.Remove(stickman);
@@ -116,15 +127,8 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private void SpawnCells(LevelData data)
+    private void SpawnCells(LevelData data, float offSetX)
     {
-        int minX = int.MaxValue;
-        int maxX = int.MinValue;
-
-        CalculateXMinMaxDimensions(ref minX, ref maxX, data);
-
-        float offSetX = (minX + maxX) * cellSize * 0.5f;
-
         foreach (ColoredCell coloredCell in data.Cells)
         {
             Vector3 localPosition = new Vector3(coloredCell.gridX * cellSize - offSetX, 0f, -(coloredCell.gridY * cellSize));
@@ -145,7 +149,7 @@ public class GridManager : MonoBehaviour
             if (coloredCell.color == StickmanColor.None)
                 continue;
 
-            Vector3 stickmanPosition = cellObj.transform.position + Vector3.up * 0.5f;
+            Vector3 stickmanPosition = cellObj.transform.position;
             GameObject stickmanObj = Instantiate(stickmanPrefab, stickmanPosition, Quaternion.identity, this.transform);
             stickmanObj.name = $"Stickman_{coloredCell.gridX}_{coloredCell.gridY}";
 
@@ -159,6 +163,47 @@ public class GridManager : MonoBehaviour
             stickman.Initialize(coloredCell.gridX, coloredCell.gridY, coloredCell.color);
             cell.SetOccupant(stickman);
             stickmans.Add(stickman);
+        }
+    }
+
+    private void SpawnBorderTiles(LevelData data, float offsetX)
+    {
+        if (borderTilePrefab == null)
+        {
+            Debug.LogError("[GridManager] borderTilePrefab is not assigned.");
+            return;
+        }
+
+        HashSet<Vector2Int> paintedPositions = new HashSet<Vector2Int>();
+        foreach (ColoredCell coloredCell in data.Cells)
+            paintedPositions.Add(new Vector2Int(coloredCell.gridX, coloredCell.gridY));
+
+        HashSet<Vector2> spawnedMidpoints = new HashSet<Vector2>();
+
+        int[] dirX = { 1, 0, -1, 0, 1, -1, -1, 1 };
+        int[] dirY = { 0, 1, 0, -1, 1, 1, -1, -1 };
+
+        foreach (Vector2Int painted in paintedPositions)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                Vector2Int neighbor = new Vector2Int(painted.x + dirX[i], painted.y + dirY[i]);
+
+                if (!paintedPositions.Contains(neighbor))
+                    continue;
+
+                Vector2 midpoint = new Vector2(painted.x + dirX[i] * 0.5f, painted.y + dirY[i] * 0.5f);
+
+                if (spawnedMidpoints.Contains(midpoint))
+                    continue;
+
+                spawnedMidpoints.Add(midpoint);
+
+                Vector3 localPosition = new Vector3(midpoint.x * cellSize - offsetX, 0f, -(midpoint.y * cellSize));
+                GameObject borderObj = Instantiate(borderTilePrefab, Vector3.zero, borderTilePrefab.transform.rotation, this.transform);
+                borderObj.transform.localPosition = localPosition;
+                borderObj.name = $"Border_{painted.x}_{painted.y}_to_{neighbor.x}_{neighbor.y}";
+            }
         }
     }
 
@@ -176,9 +221,7 @@ public class GridManager : MonoBehaviour
 
     private void OnStickmanReachedExit(StickmanController stickman)
     {
-        BusManager.Instance.HandleStickmanArrival(stickman);
-
-        // HandlesStickmanArrival->BoardStickman already disables gameObject, so no need to destroy it here
-        //Destroy(stickman.gameObject); 
+        // Leave decision to PassengerRouter
+        PassengerRouter.Instance.RoutePassenger(stickman);
     }
 }

@@ -6,35 +6,91 @@ public class EndScreenUI : MonoBehaviour
 {
     // Fields
     [SerializeField] private TextMeshProUGUI resultText;
+    [SerializeField] private TextMeshProUGUI resultLongText;
     [SerializeField] private Button nextLevelButton;
     [SerializeField] private Button retryButton;
+    [SerializeField] private GameObject rewardPanel;
+    [SerializeField] private GameObject panel;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip successSound;
+    [SerializeField] private AudioClip failSound;
+    [SerializeField] private TextMeshProUGUI coinsText;
+    [SerializeField] private CoinFlyEffect gainCoinsEffect;
+
+    private void Awake()
+    {
+        panel.gameObject.SetActive(false);
+        nextLevelButton.gameObject.SetActive(false);
+        retryButton.gameObject.SetActive(false);
+
+        if (coinsText)
+            coinsText.text = (PlayerPrefs.GetInt("Coins", 0) - 10).ToString();
+    }
 
     // Methods
     private void Start()
     {
         GameResult result = LevelManager.GetLastGameResult();
-
-        if (result == GameResult.Win)
+        if (panel == null)
         {
-            resultText.text = "Level Complete, success!";
-            nextLevelButton.gameObject.SetActive(true);
-            retryButton.gameObject.SetActive(false);
+            Debug.LogError("[EndScreenUI] panel reference is missing.");
+            panel.gameObject.SetActive(false);
         }
-        else if (result == GameResult.FailWaitingAreaFull)
+
+        UIScalePanel scalePanel = panel.GetComponent<UIScalePanel>();
+        if (scalePanel == null)
         {
-            resultText.text = "No More Space, failed";
-            nextLevelButton.gameObject.SetActive(false);
-            retryButton.gameObject.SetActive(true);
+            Debug.LogError("[EndScreenUI] panel reference is missing.");
+            panel.gameObject.SetActive(false);
         }
         else
         {
-            resultText.text = "Time Is Up!, failed";
-            nextLevelButton.gameObject.SetActive(false);
-            retryButton.gameObject.SetActive(true);
-        }
+            scalePanel.Show(() =>
+            {
+                if (result == GameResult.Win)
+                {
+                    resultText.text = "Success";
+                    resultLongText.text = "Level cleared!";
+                    nextLevelButton.gameObject.SetActive(true);
+                    retryButton.gameObject.SetActive(false);
+                    rewardPanel.gameObject.SetActive(true);
 
-        nextLevelButton.onClick.AddListener(OnNextLevelClicked);
-        retryButton.onClick.AddListener(OnRetryClicked);
+                    if (audioSource)
+                        audioSource.PlayOneShot(successSound);
+
+                    gainCoinsEffect.Play(() =>
+                    {
+                        if (coinsText)
+                            coinsText.text = PlayerPrefs.GetInt("Coins", 0).ToString();
+                    });
+                }
+                else if (result == GameResult.FailWaitingAreaFull)
+                {
+                    resultText.text = "Fail";
+                    resultLongText.text = "No More Space!";
+                    nextLevelButton.gameObject.SetActive(false);
+                    retryButton.gameObject.SetActive(true);
+                    rewardPanel.gameObject.SetActive(false);
+
+                    if (audioSource)
+                        audioSource.PlayOneShot(failSound);
+                }
+                else
+                {
+                    resultText.text = "Fail";
+                    resultLongText.text = "Time Is Up!";
+                    nextLevelButton.gameObject.SetActive(false);
+                    retryButton.gameObject.SetActive(true);
+                    rewardPanel.gameObject.SetActive(false);
+
+                    if (audioSource)
+                        audioSource.PlayOneShot(failSound);
+                }
+
+                nextLevelButton.onClick.AddListener(OnNextLevelClicked);
+                retryButton.onClick.AddListener(OnRetryClicked);
+            });
+        }
     }
 
     private void OnNextLevelClicked()

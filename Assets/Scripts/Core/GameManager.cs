@@ -141,6 +141,8 @@ public class GameManager : MonoBehaviour
         InputManager.Instance.SetInputEnabled(false);
         timerManager.StopTimer();
         LevelManager.Instance.OnLevelWin();
+        PlayerPrefs.SetInt("Coins", PlayerPrefs.GetInt("Coins", 0) + 10);
+        PlayerPrefs.Save();
         SetState(GameState.Win);
     }
 

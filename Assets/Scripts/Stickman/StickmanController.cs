@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using Unity.VisualScripting;
-
 
 public class StickmanController : MonoBehaviour
 {
@@ -9,14 +7,20 @@ public class StickmanController : MonoBehaviour
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float arrivalThreshold = 0.01f;
     [SerializeField] private Renderer meshRenderer;
+    [SerializeField] private GameObject outlineMesh;
+    [SerializeField] private SpriteRenderer blockedIcon;
+    [SerializeField] private AudioSource blockedAudioSource;
 
-    private float activeEmissionColorStrength = 0.6f;
-    private float passiveEmissionColorStrength = 0.4f;
     private int gridX;
     private int gridY;
     private StickmanColor stickmanColor;
     private bool isMoving;
     private bool IsInteractable = true;
+    private Animator animator;
+
+    private float iconScaleUpDuration = 0.15f;
+    private float iconHoldDuration = 0.5f;
+    private float iconScaleDownDuration = 0.15f;
 
     public int GridX => gridX;
     public int GridY => gridY;
@@ -25,6 +29,13 @@ public class StickmanController : MonoBehaviour
     public bool IsInteractionEnabled => IsInteractable;
 
     // Methods
+    private void Awake()
+    {
+        animator = GetComponentInChildren<Animator>();
+        if (animator == null)
+            Debug.LogError($"[StickmanController] Animator not found on {gameObject.name} or its children.");
+    }
+
     public void Initialize(int x, int y, StickmanColor color)
     {
         gridX = x;
@@ -41,6 +52,12 @@ public class StickmanController : MonoBehaviour
         meshRenderer.material.color = ColorConverter.GetColor(color);
     }
 
+    public void SetColor(StickmanColor color)
+    {
+        meshRenderer.material = new Material(meshRenderer.material);
+        meshRenderer.material.color = ColorConverter.GetColor(color);
+    }
+
     public void DisableInteraction()
     {
         IsInteractable = false;
@@ -51,10 +68,10 @@ public class StickmanController : MonoBehaviour
         if (meshRenderer == null)
             return;
 
-        meshRenderer.material.EnableKeyword("_EMISSION");
-        Color baseColor = ColorConverter.GetColor(stickmanColor);
-        meshRenderer.material.SetColor("_EmissionColor", baseColor * activeEmissionColorStrength);
-        meshRenderer.material.color = baseColor;
+        meshRenderer.material.color = ColorConverter.GetColor(stickmanColor);
+
+        if (outlineMesh != null)
+            outlineMesh.SetActive(true);
     }
 
     public void SetDimmed()
@@ -62,10 +79,51 @@ public class StickmanController : MonoBehaviour
         if (meshRenderer == null)
             return;
 
-        meshRenderer.material.DisableKeyword("_EMISSION");
-        Color baseColor = ColorConverter.GetColor(stickmanColor);
-        meshRenderer.material.color = baseColor * passiveEmissionColorStrength;
-        meshRenderer.material.SetColor("_EmissionColor", Color.black);
+        meshRenderer.material.color = ColorConverter.GetColor(stickmanColor);
+
+        if (outlineMesh != null)
+            outlineMesh.SetActive(false);
+    }
+
+    public void PlayBlockedFeedback()
+    {
+        if (blockedAudioSource != null)
+            blockedAudioSource.Play();
+
+        if (blockedIcon != null)
+            StartCoroutine(BlockedIconCoroutine());
+    }
+
+    private IEnumerator BlockedIconCoroutine()
+    {
+        Vector3 fullScale = Vector3.one * 2.0f;
+
+        blockedIcon.gameObject.SetActive(true);
+        blockedIcon.transform.localScale = Vector3.zero;
+
+        float elapsed = 0f;
+        while (elapsed < iconScaleUpDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / iconScaleUpDuration);
+            blockedIcon.transform.localScale = Vector3.Lerp(Vector3.zero, fullScale, t);
+            yield return null;
+        }
+
+        blockedIcon.transform.localScale = fullScale;
+        yield return new WaitForSeconds(iconHoldDuration);
+
+        elapsed = 0f;
+        while (elapsed < iconScaleDownDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / iconScaleDownDuration);
+            blockedIcon.transform.localScale = Vector3.Lerp(fullScale, Vector3.zero, t);
+            yield return null;
+        }
+
+        blockedIcon.transform.localScale = Vector3.zero;
+        blockedIcon.gameObject.SetActive(false);
     }
 
     public void MoveToExit(Vector3[] path, System.Action onComplete)
@@ -76,9 +134,21 @@ public class StickmanController : MonoBehaviour
         StartCoroutine(FollowPath(path, onComplete));
     }
 
+    public void MoveToPoint(Vector3 destination, System.Action onComplete)
+    {
+        if (isMoving)
+            return;
+
+        StartCoroutine(FollowPath(new Vector3[] { destination }, onComplete));
+    }
+
     public IEnumerator FollowPath(Vector3[] path, System.Action onComplete)
     {
         isMoving = true;
+
+        if (animator != null)
+            animator.SetBool("IsWalking", true);
+
         foreach (Vector3 target in path)
         {
             while (Vector3.Distance(transform.position, target) > arrivalThreshold)
@@ -89,8 +159,18 @@ public class StickmanController : MonoBehaviour
             transform.position = target;
         }
 
+        if (animator != null)
+            animator.SetBool("IsWalking", false);
+
         isMoving = false;
         GameManager.Instance.OnStickmanWalkEnded();
         onComplete?.Invoke();
+    }
+    public void StopMovement()
+    {
+        StopAllCoroutines();
+        isMoving = false;
+        if (animator != null)
+            animator.SetBool("IsWalking", false);
     }
 }

@@ -21,6 +21,7 @@ public class BusManager : MonoBehaviour
 
     // Misc
     public static BusManager Instance { get; private set; }
+    public bool IsTransitioning => isTransitioning;
 
     // Methods
     private void Awake()
@@ -51,31 +52,29 @@ public class BusManager : MonoBehaviour
         return StickmanColor.None;
     }
 
-    public void HandleStickmanArrival(StickmanController stickman)
-    {
-        if (activeBus == null || isTransitioning)
-        {
-            WaitingAreaManager.Instance.AddToWaiting(stickman);
-            return;
-        }
-
-        if (stickman.CColor == activeBus.BusColor)
-        {
-            BoardStickman(stickman);
-        }
-        else
-        {
-            WaitingAreaManager.Instance.AddToWaiting(stickman);
-        }
-    }
-
     public void BoardStickman(StickmanController stickman)
     {
         if (activeBus == null || activeBus.IsFull)
             return;
 
-        stickman.gameObject.SetActive(false);
-        activeBus.TryBoardPassenger();
+        BusController targetBus = activeBus;
+        Vector3 entryPoint = targetBus.PassengerEntryPoint.transform.position + Vector3.up * 0.5f;
+
+        stickman.StopMovement();
+        stickman.MoveToPoint(entryPoint, () =>
+        {
+            if (targetBus == null || targetBus.IsFull)
+            {
+                WaitingAreaManager.Instance.AddToWaiting(stickman);
+                return;
+            }
+
+            bool boarded = targetBus.TryBoardPassenger(stickman.CColor);
+            if (boarded)
+                stickman.gameObject.SetActive(false);
+            else
+                WaitingAreaManager.Instance.AddToWaiting(stickman);
+        });
     }
 
     public void SpawnNextBus()
@@ -124,6 +123,7 @@ public class BusManager : MonoBehaviour
         bus.transform.position = busStopTransform.position;
         isTransitioning = false;
 
+        // After bus arrives try to 
         WaitingAreaManager.Instance.TryBoardWaitingPassengers();
     }
 

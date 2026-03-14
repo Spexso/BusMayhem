@@ -8,11 +8,15 @@ public class GameplayScreenUI : MonoBehaviour
     // Fields
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private TextMeshProUGUI timerText;
+    [SerializeField] private AudioSource gameplayMusic;
 
 
     // Methods
     private void Start()
     {
+        if (gameplayMusic)
+            gameplayMusic.Play();
+
         levelText.text = $"Level {LevelManager.Instance.CurrentLevelIndex + 1}";
     }
 
@@ -24,7 +28,7 @@ public class GameplayScreenUI : MonoBehaviour
 
     private void OnDisable()
     {
-
+        gameplayMusic.Stop();
     }
 
     private void HandleStateChanged(GameState newState)

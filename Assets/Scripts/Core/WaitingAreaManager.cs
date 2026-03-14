@@ -14,6 +14,7 @@ public class WaitingAreaManager : MonoBehaviour
     private List<StickmanController> waitingPassengers;
     private Vector3[] slotPositions;
     private int slotCount;
+    private int reservedSlotCount;
 
     public event Action OnWaitingAreaFull;
 
@@ -38,6 +39,7 @@ public class WaitingAreaManager : MonoBehaviour
 
         slotCount = data.WaitingAreaSize;
         waitingPassengers = new List<StickmanController>(slotCount);
+        reservedSlotCount = 0;
 
         slotPositions = new Vector3[slotCount];
 
@@ -54,7 +56,7 @@ public class WaitingAreaManager : MonoBehaviour
 
     public bool HasFreeSlot()
     {
-        return waitingPassengers.Count < slotCount;
+        return reservedSlotCount < slotCount;
     }
 
     public bool HasAnyStickmans()
@@ -70,9 +72,16 @@ public class WaitingAreaManager : MonoBehaviour
             return;
         }
 
+        int slotIndex = reservedSlotCount;
+        reservedSlotCount++;
         waitingPassengers.Add(stickman);
         stickman.DisableInteraction();
-        stickman.transform.position = slotPositions[waitingPassengers.Count - 1] + Vector3.up * 0.5f;
+
+        Vector3 targetPosition = slotPositions[slotIndex];
+        stickman.MoveToPoint(targetPosition, () =>
+        {
+            TryBoardWaitingPassengers();
+        });
 
         if (!HasFreeSlot())
             OnWaitingAreaFull?.Invoke();
@@ -80,15 +89,25 @@ public class WaitingAreaManager : MonoBehaviour
 
     public void TryBoardWaitingPassengers()
     {
+        // If no bus at the stop do not try to board passengers
+        if (BusManager.Instance.IsTransitioning)
+            return;
+
         StickmanColor activeColor = BusManager.Instance.GetActiveBusColor();
 
         for (int i = waitingPassengers.Count - 1; i >= 0; i--)
         {
-            if (waitingPassengers[i].CColor == activeColor)
-            {
-                BusManager.Instance.BoardStickman(waitingPassengers[i]);
-                waitingPassengers.RemoveAt(i);
-            }
+            StickmanController stickman = waitingPassengers[i];
+
+            if (stickman.CColor != activeColor)
+                continue;
+
+            if (stickman.IsMoving)
+                continue;
+
+            BusManager.Instance.BoardStickman(stickman);
+            waitingPassengers.RemoveAt(i);
+            reservedSlotCount--;
         }
 
         RefreshSlotPositions();
@@ -96,8 +115,10 @@ public class WaitingAreaManager : MonoBehaviour
 
     private void RefreshSlotPositions()
     {
-        for (int i = 0; i < waitingPassengers.Count; i++)
-            waitingPassengers[i].transform.position = slotPositions[i];
+        for (int index = 0; index < waitingPassengers.Count; index++)
+        {
+            waitingPassengers[index].MoveToPoint(slotPositions[index], null);
+        }
     }
 
     private void HideDebugPlane()
